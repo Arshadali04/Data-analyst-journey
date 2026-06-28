@@ -39,3 +39,31 @@ IFS syntax:
 IFS example:
 =IFS(A2>=80, "A", A2>=60, "B", TRUE, "C")
 This gives a grade based on the value in A2.
+
+Python:
+
+1. Sets
+Definition: A set is a collection of unique items.
+Syntax: my_set = {1, 2, 3}
+Example: colors = {"red", "blue", "green"}
+
+2. Casting
+Definition: Casting means changing one data type into another.
+Syntax: int(value), float(value), str(value)
+Example: num = int("10")
+
+3. Data types
+Definition: Data types tell us what kind of value a variable stores.
+Syntax: int, float, str, bool, list, tuple, set, dict
+Example: age = 25, name = "Arshad", marks = 89.5
+
+4. Important string methods
+Definition: String methods help us work with text.
+Syntax: text.lower(), text.upper(), text.strip(), text.replace()
+Example: name = "  Arshad  "
+name.strip() gives "Arshad"
+
+5. List important operators
+Definition: Operators are used to work with lists.
+Syntax: +, *, in, not in
+Example: [1, 2] + [3, 4] gives [1, 2, 3, 4]
