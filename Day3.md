@@ -411,116 +411,361 @@ for fruit in fruits:
 
 ### 5. Python functions
 
-Definition: A function is a block of code that runs when called.
+Definition: A function is a block of code that runs when called. Functions help organize code, make it reusable, and easier to maintain.
 
-Basic syntax:
+---
+
+#### **Type 1: Basic Function (No Arguments, No Return)**
+
+**Explanation:** Simplest function that does something without needing input or sending output. Used for repetitive tasks like printing messages.
+
+**Syntax:**
 
 ```python
 def function_name():
 	statement
 ```
 
-Example:
+**Example:**
 
 ```python
 def greet():
 	print("Hello")
+
+greet()  # Output: Hello
 ```
 
-Call a function:
+**When to use:** For simple tasks like printing, displaying messages, or performing actions that don't depend on different values.
 
-```python
-greet()
-```
+---
 
-Function with arguments:
+#### **Type 2: Function with Arguments**
+
+**Explanation:** Function that accepts parameters (values) to work with. These parameters are used inside the function to perform calculations or operations.
+
+**Syntax:**
 
 ```python
 def add(a, b):
 	return a + b
 ```
 
-Example:
+**Example:**
 
 ```python
-add(2, 3)
+result = add(2, 3)  # Output: 5
+result = add(10, 20)  # Output: 30
 ```
 
-Default arguments:
+**When to use:** When you want to pass different values each time the function is called. Essential for data processing.
 
-```python
-def greet(name="Arshad"):
-	print("Hello", name)
-```
+---
 
-Keyword arguments:
+#### **Type 3: Function with Return Value**
 
-```python
-greet(name="Ali")
-```
+**Explanation:** Function that computes something and sends the result back to the calling code using `return`. Allows you to store results in variables.
 
-Arbitrary positional arguments:
-
-```python
-def total(*numbers):
-	return sum(numbers)
-```
-
-Arbitrary keyword arguments:
-
-```python
-def show(**data):
-	print(data)
-```
-
-Return value:
+**Syntax:**
 
 ```python
 def square(x):
 	return x * x
 ```
 
-Pass statement:
+**Example:**
 
 ```python
-def my_function():
-	pass
+area = square(5)  # area = 25
+print(area)  # Output: 25
 ```
 
-Lambda function:
+**When to use:** When you need to use the result in further calculations or store it for later use.
+
+---
+
+#### **Type 4: Default Arguments**
+
+**Explanation:** Function parameters with default values. If caller doesn't provide an argument, the default value is used.
+
+**Syntax:**
+
+```python
+def greet(name="Arshad"):
+	print("Hello", name)
+```
+
+**Example:**
+
+```python
+greet()  # Output: Hello Arshad (uses default)
+greet("Ali")  # Output: Hello Ali (overrides default)
+```
+
+**When to use:** When you have parameters that usually have the same value, but might change sometimes.
+
+---
+
+#### **Type 5: Keyword Arguments**
+
+**Explanation:** Passing arguments by specifying their names instead of just positions. Makes code more readable and flexible.
+
+**Syntax:**
+
+```python
+def greet(name, age):
+	print(f"{name} is {age} years old")
+
+greet(name="Ali", age=25)  # Order doesn't matter
+greet(age=25, name="Ali")  # Same result
+```
+
+**Example:**
+
+```python
+def show_student(name, marks, grade):
+	print(f"{name}: {marks} ({grade})")
+
+show_student(grade="A", marks=90, name="Priya")
+# Output: Priya: 90 (A)
+```
+
+**When to use:** When functions have many parameters or you want to make function calls clear and understandable.
+
+---
+
+#### **Type 6: Arbitrary Positional Arguments (*args)**
+
+**Explanation:** Accept any number of positional arguments. Stored as a tuple. Useful when you don't know how many values will be passed.
+
+**Syntax:**
+
+```python
+def total(*numbers):
+	return sum(numbers)
+```
+
+**Example:**
+
+```python
+total(1, 2, 3)  # Output: 6
+total(10, 20, 30, 40, 50)  # Output: 150
+```
+
+**When to use:** When you want a function to accept flexible number of values (like calculating sum, average, maximum).
+
+---
+
+#### **Type 7: Arbitrary Keyword Arguments (**kwargs)**
+
+**Explanation:** Accept any number of keyword arguments. Stored as a dictionary. Useful for flexible, named parameters.
+
+**Syntax:**
+
+```python
+def show(**data):
+	print(data)
+```
+
+**Example:**
+
+```python
+show(name="Ali", age=25, city="Mumbai")
+# Output: {'name': 'Ali', 'age': 25, 'city': 'Mumbai'}
+
+def display_info(**info):
+	for key, value in info.items():
+		print(f"{key}: {value}")
+
+display_info(name="Priya", salary=50000, department="Sales")
+# Output: name: Priya
+#         salary: 50000
+#         department: Sales
+```
+
+**When to use:** When you need to handle flexible key-value pairs (like configuration settings, user data).
+
+---
+
+#### **Type 8: Lambda Function (Anonymous Function)**
+
+**Explanation:** Small anonymous function written in one line. Used for simple operations without defining a full function.
+
+**Syntax:**
 
 ```python
 square = lambda x: x * x
 ```
 
-Nested function:
+**Example:**
+
+```python
+# Simple calculation
+square = lambda x: x * x
+print(square(5))  # Output: 25
+
+# With multiple parameters
+add = lambda x, y: x + y
+print(add(3, 7))  # Output: 10
+
+# Used with map()
+numbers = [1, 2, 3, 4, 5]
+squared = list(map(lambda x: x * x, numbers))
+print(squared)  # Output: [1, 4, 9, 16, 25]
+
+# Used with filter()
+marks = [45, 78, 92, 55, 88]
+passed = list(filter(lambda x: x >= 50, marks))
+print(passed)  # Output: [78, 92, 55, 88]
+```
+
+**When to use:** For simple, one-time operations. Very common with `map()`, `filter()`, and `sorted()`.
+
+---
+
+#### **Type 9: Nested Function**
+
+**Explanation:** Function defined inside another function. Inner function has access to outer function's variables.
+
+**Syntax:**
 
 ```python
 def outer():
 	def inner():
-		print("Inside")
+		print("Inside inner function")
 	inner()
+
+outer()  # Output: Inside inner function
 ```
 
-Recursion:
+**Example:**
 
 ```python
+def calculate(base):
+	# Inner functions can use outer's variables
+	def add_tax(amount):
+		return amount + (amount * 0.18)  # 18% tax
+	
+	def apply_discount(amount):
+		return amount * 0.9  # 10% discount
+	
+	taxed = add_tax(base)
+	discounted = apply_discount(taxed)
+	return discounted
+
+print(calculate(1000))  # Output: 882.0
+```
+
+**When to use:** When you need helper functions that are only used by one parent function.
+
+---
+
+#### **Type 10: Recursion**
+
+**Explanation:** Function that calls itself repeatedly until a base condition is met. Used for problems that have repetitive structure.
+
+**Syntax:**
+
+```python
+def factorial(n):
+	if n == 1:  # Base case: stop condition
+		return 1
+	return n * factorial(n - 1)  # Recursive call
+```
+
+**Example:**
+
+```python
+# Factorial example
 def factorial(n):
 	if n == 1:
 		return 1
 	return n * factorial(n - 1)
+
+print(factorial(5))  # Output: 120 (5 × 4 × 3 × 2 × 1)
+
+# Sum of numbers
+def sum_numbers(n):
+	if n == 0:
+		return 0
+	return n + sum_numbers(n - 1)
+
+print(sum_numbers(5))  # Output: 15 (5+4+3+2+1)
+
+# Fibonacci sequence
+def fibonacci(n):
+	if n <= 1:
+		return n
+	return fibonacci(n - 1) + fibonacci(n - 2)
+
+print(fibonacci(6))  # Output: 8
 ```
 
-Scope example:
+**When to use:** For problems like factorial, tree traversal, and sequences. Be careful of infinite loops!
+
+---
+
+#### **Type 11: Variable Scope**
+
+**Explanation:** Where a variable can be used. Global (entire code) or Local (only within function).
+
+**Syntax:**
 
 ```python
-name = "Arshad"
+name = "Arshad"  # Global variable
 
 def show_name():
-	print(name)
+	print(name)  # Can access global variable
+
+show_name()  # Output: Arshad
 ```
 
-Function names should be simple and descriptive.
+**Example:**
+
+```python
+# Global variable
+city = "Mumbai"
+
+def show_info():
+	age = 25  # Local variable - only in function
+	print(f"Age: {age}, City: {city}")
+
+show_info()  # Output: Age: 25, City: Mumbai
+print(age)  # Error: age is not defined globally
+
+# Modifying global variable
+counter = 0
+
+def increment():
+	global counter  # Tell Python to use global counter
+	counter += 1
+	print(counter)
+
+increment()  # Output: 1
+increment()  # Output: 2
+```
+
+**When to use:** Understand variable scope to avoid conflicts and unintended side effects.
+
+---
+
+#### **Best Practices:**
+
+1. **Function names** should be simple, descriptive, and lowercase with underscores
+   - Good: `calculate_total()`, `get_student_marks()`
+   - Bad: `calc()`, `f()`, `function1()`
+
+2. **Keep functions small** - do one thing well
+
+3. **Use docstrings** to explain what function does:
+   ```python
+   def add(a, b):
+       """Add two numbers and return the result"""
+       return a + b
+   ```
+
+4. **Use meaningful parameter names** - helps understand what to pass
+
+5. **Return early** - exit function as soon as you have result
 
 ### 6. Common data analysis syntax
 
