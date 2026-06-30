@@ -1,7 +1,7 @@
 <div align="center">
 
 # 📊 Data Analyst Journey
-### *Arshad Ali M Athani*
+### *Arshadali M Athani*
 
 **`"Turning Raw Data into Meaningful Stories — One Day at a Time"`**
 
@@ -127,55 +127,6 @@ I believe in the power of **learning in public**. Every note, every error, every
 | 16 | ✅ **Interview Preparation** | `Planned` | SQL rounds, case studies, behavioral prep |
 
 </details>
-
----
-
-## 📁 Repository Structure
-
-```
-📦 Data-Analyst-Journey/
-│
-├── 📂 Daily-Notes/              # Day-by-day learning logs
-│   ├── Week-01/
-│   ├── Week-02/
-│   └── ...
-│
-├── 📂 SQL-Practice/             # SQL queries, exercises, and solutions
-│   ├── basics/
-│   ├── joins/
-│   ├── window-functions/
-│   └── leetcode-sql/
-│
-├── 📂 Python-Practice/          # Python scripts and notebooks
-│   ├── pandas/
-│   ├── numpy/
-│   ├── matplotlib/
-│   └── seaborn/
-│
-├── 📂 Excel-Learning/           # Excel workbooks and practice files
-│   ├── pivot-tables/
-│   ├── vlookup-practice/
-│   └── dashboards/
-│
-├── 📂 Power-BI-Dashboards/      # Power BI .pbix files and screenshots
-│   └── projects/
-│
-├── 📂 Tableau-Dashboards/       # Tableau workbooks and Tableau Public links
-│   └── projects/
-│
-├── 📂 Projects/                 # End-to-end portfolio projects
-│   ├── financial-data-anonymization/
-│   ├── ola-ride-analytics/
-│   ├── amazon-sales-dashboard/
-│   └── youtube-eda/
-│
-├── 📂 Interview-Preparation/    # Notes, mock questions, case studies
-│   ├── sql-interview-qs/
-│   ├── python-interview-qs/
-│   └── case-studies/
-│
-└── 📂 Certifications/           # Certificates earned along the journey
-```
 
 ---
 
@@ -397,20 +348,6 @@ I believe in the power of **learning in public**. Every note, every error, every
 
 ---
 
-## 📈 GitHub Statistics
-
-<div align="center">
-
-![GitHub Stats](https://github-readme-stats.vercel.app/api?username=arshadaliathani&show_icons=true&theme=tokyonight&hide_border=true&include_all_commits=true&count_private=true)
-
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=arshadaliathani&layout=compact&theme=tokyonight&hide_border=true)
-
-![GitHub Streak](https://streak-stats.demolab.com/?user=arshadaliathani&theme=tokyonight&hide_border=true)
-
-</div>
-
----
-
 ## 💬 Motivation
 
 <div align="center">
@@ -445,10 +382,10 @@ I believe in the power of **learning in public**. Every note, every error, every
 
 | Platform | Link |
 |----------|------|
-| 🐙 **GitHub** | [github.com/arshadaliathani](https://github.com/arshadaliathani) *(update your handle)* |
-| 💼 **LinkedIn** | [linkedin.com/in/arshadaliathani](https://linkedin.com/in/arshadaliathani) *(add your profile)* |
+| 🐙 **GitHub** | [github.com/arshadaliathani](https://github.com/arshadali04) |
+| 💼 **LinkedIn** | [linkedin.com/in/arshadaliathani](https://linkedin.com/in/arshadali4) |
 | 🌐 **Portfolio** | *(Coming Soon — link your portfolio here)* |
-| 📧 **Email** | *(your.email@example.com)* |
+| 📧 **Email** | (arshadalia2703@gmail.com) |
 
 <br/>
 
