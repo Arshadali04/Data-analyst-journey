@@ -832,3 +832,17 @@ Regular `.xlsx` files do not save macros.
 
 ---
 
+## Practice Exercises — Pivot Tables
+
+- [ ] Create a Pivot Table showing Category-wise Sales and add a Pivot Chart
+- [ ] Insert a Slicer for Region and connect it to 2 different Pivot Tables
+- [ ] Add a Timeline filter and view data quarter-by-quarter
+- [ ] Group employees by custom zones (North/South/East) using Custom Grouping
+- [ ] Use "Show Values As → % of Grand Total" to display sales percentages
+- [ ] Add a Calculated Field for Incentive = Sales × 1.5%
+- [ ] Create a Dynamic Pivot Table using the OFFSET formula method
+- [ ] Use Power Query to combine January and February sheets into one Pivot Table
+- [ ] Use GETPIVOTDATA with dropdown selectors to build a summary lookup
+- [ ] Build a mini MIS dashboard: Spin Button + Pivot Table + Pivot Chart with auto-refresh
+
+---
