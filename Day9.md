@@ -343,3 +343,340 @@ INNER JOIN orders o ON u.id = o.user_id;
 
 ---
 
+# PART 3: UNION & UNION ALL 🔄
+
+## What is UNION?
+
+> *"The UNION operator is used to combine the result sets of two or more SELECT statements. It removes duplicates by default."*
+
+Where JOINs combine **columns** (side by side), UNION combines **rows** (stacked on top of each other).
+
+---
+
+## Example Scenario
+
+You have a `users` table for regular users and an `admin_users` table for administrators. You want a single combined list of everyone.
+
+### Step 1: Create the admin_users Table
+```sql
+CREATE TABLE admin_users (
+  id            INT PRIMARY KEY,
+  name          VARCHAR(100),
+  email         VARCHAR(100),
+  gender        ENUM('Male', 'Female', 'Other'),
+  date_of_birth DATE,
+  salary        INT
+);
+```
+
+### Step 2: Insert Sample Data
+```sql
+INSERT INTO admin_users (id, name, email, gender, date_of_birth, salary) VALUES
+(101, 'Anil Kumar',   'anil@example.com',   'Male',   '1985-04-12', 60000),
+(102, 'Pooja Sharma', 'pooja@example.com',  'Female', '1992-09-20', 58000),
+(103, 'Rakesh Yadav', 'rakesh@example.com', 'Male',   '1989-11-05', 54000),
+(104, 'Fatima Begum', 'fatima@example.com', 'Female', '1990-06-30', 62000);
+```
+
+---
+
+## Basic UNION — Combine & Remove Duplicates
+
+```sql
+SELECT name FROM users
+UNION
+SELECT name FROM admin_users;
+```
+
+Returns a **single list of unique names** from both tables. If any name appears in both tables, it shows **only once**.
+
+---
+
+## UNION ALL — Combine & Keep Duplicates
+
+```sql
+SELECT name FROM users
+UNION ALL
+SELECT name FROM admin_users;
+```
+
+Returns **all names** including duplicates. If "Alice" exists in both tables, she appears **twice**.
+
+---
+
+## Selecting Multiple Columns
+
+Both SELECT statements must return the **same number of columns** with compatible data types:
+
+```sql
+SELECT name, salary FROM users
+UNION
+SELECT name, salary FROM admin_users;
+```
+
+The column names in the final output are taken from the **first SELECT statement**.
+
+---
+
+## Adding a Role Label Column
+
+You can add a literal value as a column to distinguish which table each row came from:
+
+```sql
+SELECT name, 'User' AS role FROM users
+UNION
+SELECT name, 'Admin' AS role FROM admin_users;
+```
+
+**Output:**
+
+| name         | role  |
+|--------------|-------|
+| Alice        | User  |
+| Bob          | User  |
+| Anil Kumar   | Admin |
+| Pooja Sharma | Admin |
+
+This is very useful for reporting — you know at a glance which records are users and which are admins.
+
+---
+
+## ORDER BY with UNION
+
+`ORDER BY` applies to the **entire combined result**, not individual SELECT statements. Place it at the very end:
+
+```sql
+SELECT name FROM users
+UNION
+SELECT name FROM admin_users
+ORDER BY name;
+```
+
+> ⚠️ Do NOT put `ORDER BY` inside each individual SELECT — only at the end of the full UNION query.
+
+---
+
+## Rules of UNION
+
+| Rule | Detail |
+|------|--------|
+| **Same column count** | Both SELECT statements must return the same number of columns |
+| **Compatible data types** | Corresponding columns must have compatible types (e.g., both VARCHAR) |
+| **UNION removes duplicates** | Duplicate rows are removed automatically |
+| **UNION ALL keeps duplicates** | All rows are returned including exact duplicates |
+| **Column names from first SELECT** | The output column headers come from the first SELECT statement |
+| **ORDER BY at the end** | Only one ORDER BY at the very end — applies to the full result |
+
+---
+
+## When to Use UNION
+
+- Combining **current and archived** data (e.g., active users + deleted users)
+- Merging **similar tables** with the same structure (e.g., users + admin_users)
+- **Cross-category reporting** (e.g., high-salary employees from two different departments)
+- Replacing multiple OR conditions when data spans different tables
+
+---
+
+## UNION vs UNION ALL — Summary
+
+| | UNION | UNION ALL |
+|--|-------|-----------|
+| **Duplicates** | Removed automatically | Kept |
+| **Performance** | Slower (must check for duplicates) | Faster (no deduplication step) |
+| **Use when** | You need a clean unique list | You need all records, or know there are no duplicates |
+
+---
+
+# PART 4: SELF JOIN 🔁
+
+## What is a Self Join?
+
+> *"A Self JOIN is a regular join, but the table is joined with itself."*
+
+This is useful when rows **within the same table are related to each other**. The classic example: a referral system where users refer other users, and the referrer's ID is stored in the same `users` table.
+
+---
+
+## The Scenario — Referral System
+
+We have a `users` table. We want to track who referred whom. Instead of creating a separate table, we add a `referred_by_id` column to the same `users` table — storing the `id` of the person who made the referral.
+
+---
+
+## Step 1: Add the referred_by_id Column
+
+```sql
+ALTER TABLE users
+ADD COLUMN referred_by_id INT;
+```
+
+- Will be `NULL` for users who were not referred by anyone
+- Will contain the `id` of the user who referred them
+
+---
+
+## Step 2: Insert Referral Data
+
+```sql
+-- User 1 referred Users 2 and 3
+UPDATE users SET referred_by_id = 1 WHERE id IN (2, 3);
+
+-- User 2 referred User 4
+UPDATE users SET referred_by_id = 2 WHERE id = 4;
+```
+
+The `users` table now looks like this:
+
+| id | name  | referred_by_id |
+|----|-------|----------------|
+| 1  | Aarav | NULL           |
+| 2  | Sneha | 1              |
+| 3  | Raj   | 1              |
+| 4  | Fatima| 2              |
+
+---
+
+## Step 3: Self JOIN Query
+
+We want to display each user's name alongside the name of the person who referred them.
+
+```sql
+SELECT
+  a.id,
+  a.name        AS user_name,
+  b.name        AS referred_by
+FROM users a
+INNER JOIN users b ON a.referred_by_id = b.id;
+```
+
+**How it works:**
+- `a` → alias for the **user being queried** (the one who was referred)
+- `b` → alias for the **referrer** (the one who referred them)
+- `ON a.referred_by_id = b.id` → matches the referrer's id in table `b` with the stored `referred_by_id` in table `a`
+- Both `a` and `b` point to the **same physical table** — just viewed from two different perspectives
+
+### Output (INNER JOIN — Excludes Non-Referred Users)
+
+| id | user_name | referred_by |
+|----|-----------|-------------|
+| 2  | Sneha     | Aarav       |
+| 3  | Raj       | Aarav       |
+| 4  | Fatima    | Sneha       |
+
+> Aarav (id = 1) is **not shown** because his `referred_by_id` is NULL — no match in the INNER JOIN.
+
+---
+
+## Using LEFT JOIN to Include All Users
+
+To include users who weren't referred by anyone (showing NULL for their referrer):
+
+```sql
+SELECT
+  a.id,
+  a.name        AS user_name,
+  b.name        AS referred_by
+FROM users a
+LEFT JOIN users b ON a.referred_by_id = b.id;
+```
+
+### Output (LEFT JOIN — Includes Everyone)
+
+| id | user_name | referred_by |
+|----|-----------|-------------|
+| 1  | Aarav     | NULL        |
+| 2  | Sneha     | Aarav       |
+| 3  | Raj       | Aarav       |
+| 4  | Fatima    | Sneha       |
+
+> Aarav now appears with `NULL` in the `referred_by` column — meaning he wasn't referred by anyone.
+
+---
+
+## Key Rules for Self JOIN
+
+1. **Always use aliases** — since you're joining a table with itself, aliases (`a` and `b`) are mandatory to distinguish the two "copies"
+2. **Choose the right JOIN type:**
+   - `INNER JOIN` → only shows rows where a referrer exists (excludes `NULL` referred_by_id)
+   - `LEFT JOIN` → shows all rows, including those with no referrer
+3. **Same table, different perspectives** — `a` and `b` are just two different views into the same data
+
+---
+
+## Other Real-World Self JOIN Use Cases
+
+| Scenario | Self JOIN Logic |
+|----------|----------------|
+| Employee & Manager | Employee table has a `manager_id` column referencing another employee's `id` |
+| Category & Parent Category | Category table has a `parent_category_id` referencing another category |
+| Friend connections | Users table with a `friend_id` referencing another user |
+| Reply threads | Comments table with a `parent_comment_id` referencing another comment |
+
+---
+
+## 🎯 OVERALL KEY TAKEAWAYS — Day 9
+
+| Topic | Most Important Point |
+|-------|---------------------|
+| **Foreign Key** | Links a child table column to the parent table's PRIMARY KEY |
+| **RESTRICT** | Default ON DELETE — blocks parent deletion if children exist |
+| **CASCADE** | Deletes child rows automatically when parent is deleted |
+| **SET NULL** | Sets FK column to NULL in child when parent is deleted |
+| **Name your FK** | Always name constraints (`CONSTRAINT fk_name`) for easy management |
+| **INNER JOIN** | Only matching rows from both tables — strictest join |
+| **LEFT JOIN** | All rows from left + matches from right (NULL if no match) |
+| **RIGHT JOIN** | All rows from right + matches from left (NULL if no match) |
+| **UNION** | Stacks rows from two queries; removes duplicates |
+| **UNION ALL** | Stacks rows from two queries; keeps all duplicates |
+| **UNION rules** | Same number of columns, compatible types, ORDER BY at the end only |
+| **Self JOIN** | Table joined with itself using two aliases; needs LEFT JOIN for NULLs |
+| **Self JOIN aliases** | `a` and `b` are mandatory — both reference the same table |
+
+---
+
+## ⚡ Pro Tips — Day 9
+
+1. **Always name your FK constraints** — auto-generated names are hard to remember when you need to drop them
+2. **Check behavior before using CASCADE** — deleting a parent can silently wipe many child rows
+3. **Use LEFT JOIN by default** over INNER JOIN — you rarely want to silently exclude unmatched records without knowing
+4. **LEFT JOIN + WHERE IS NULL** — a powerful pattern to find "orphan" records (rows with no match)
+5. **RIGHT JOIN can always be rewritten as LEFT JOIN** — just swap the table order; LEFT JOIN is more readable
+6. **UNION is slower than UNION ALL** — if you know there are no duplicates, always use UNION ALL
+7. **Add a role/label column in UNION** (`'Admin' AS role`) — makes combined results easy to identify in reports
+8. **Self JOIN always needs aliases** — without `a` and `b`, MySQL can't tell which "copy" of the table you mean
+9. **Use LEFT JOIN in Self JOINs** — INNER JOIN silently drops rows where the FK is NULL (e.g., the top-level user with no referrer)
+10. **Self JOIN is a design signal** — if you find yourself needing it, your table has a hierarchical/recursive relationship built into it
+
+---
+
+## Practice Exercises — Day 9
+
+**Foreign Keys:**
+- [ ] Create a `users` table and an `addresses` table with a named foreign key constraint
+- [ ] Try inserting an address with a `user_id` that doesn't exist — observe the error
+- [ ] Add `ON DELETE CASCADE` and test: delete a user and confirm their addresses are also deleted
+- [ ] Add `ON DELETE SET NULL` instead — delete a user and confirm `user_id` becomes NULL
+- [ ] Drop the foreign key using the constraint name
+
+**JOINs:**
+- [ ] Write an INNER JOIN query to get user names with their cities
+- [ ] Write a LEFT JOIN and identify which users have no address (city = NULL)
+- [ ] Write a RIGHT JOIN and identify which addresses have no matching user
+- [ ] Add a third table (e.g., `orders`) and write a query joining all three tables
+- [ ] Rewrite a RIGHT JOIN as a LEFT JOIN (just swap the table order)
+
+**UNION & UNION ALL:**
+- [ ] Combine `users` and `admin_users` names using UNION — note duplicates are removed
+- [ ] Do the same with UNION ALL — confirm duplicates now appear
+- [ ] Add a `'User'` / `'Admin'` label column to the combined result
+- [ ] Use ORDER BY at the end of a UNION query to sort the combined result
+
+**Self Join:**
+- [ ] Add `referred_by_id` column to users table
+- [ ] Insert referral data for at least 4 users
+- [ ] Write a Self JOIN with INNER JOIN — observe that the top-level user is excluded
+- [ ] Rewrite it with LEFT JOIN — confirm the top-level user now shows with NULL referrer
+- [ ] Try a Self JOIN for an employee-manager scenario
+
+---
