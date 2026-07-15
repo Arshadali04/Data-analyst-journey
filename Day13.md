@@ -485,3 +485,401 @@ df.iloc[5, 2]            # 6th row, 3rd column
 
 ---
 
+# PART 9: FILTERING DATA 🔎
+
+## Single Condition
+
+```python
+# Sales greater than 4000
+df[df['Sales'] > 4000]
+
+# City is Mumbai
+df[df['City'] == 'Mumbai']
+
+# Name contains 'Ali' (case-insensitive)
+df[df['Name'].str.contains('Ali', case=False)]
+```
+
+## Multiple Conditions
+
+```python
+# AND: both conditions must be true
+df[(df['Sales'] > 3000) & (df['City'] == 'Mumbai')]
+
+# OR: either condition
+df[(df['City'] == 'Mumbai') | (df['City'] == 'Delhi')]
+
+# NOT: negate a condition
+df[~(df['City'] == 'Pune')]    # all rows except Pune
+```
+
+> ⚠️ Use `&` (not `and`) and `|` (not `or`) for Pandas filtering. Wrap each condition in parentheses `( )`.
+
+## isin() — Filter by a List of Values
+
+```python
+cities = ['Mumbai', 'Delhi', 'Bangalore']
+df[df['City'].isin(cities)]
+
+# Inverse — exclude those cities
+df[~df['City'].isin(cities)]
+```
+
+## between() — Filter a Numeric Range
+
+```python
+df[df['Sales'].between(3000, 6000)]  # inclusive on both ends
+```
+
+## query() — String-Based Filtering (Readable Syntax)
+
+```python
+df.query("Sales > 4000 and City == 'Mumbai'")
+df.query("Sales > @threshold")  # use @ to reference Python variable
+```
+
+---
+
+# PART 10: MODIFYING DATAFRAMES ✏️
+
+## Adding a New Column
+
+```python
+# Calculated column
+df['Tax'] = df['Sales'] * 0.18
+
+# Constant value
+df['Country'] = 'India'
+
+# Conditional column using np.where
+import numpy as np
+df['Performance'] = np.where(df['Sales'] >= 4000, 'High', 'Low')
+```
+
+## Renaming Columns
+
+```python
+# Rename specific columns
+df.rename(columns={'Name': 'Employee', 'Sales': 'Revenue'}, inplace=True)
+
+# Rename all at once (list must match column count)
+df.columns = ['Employee', 'City', 'Revenue', 'Month']
+```
+
+## Dropping Columns and Rows
+
+```python
+# Drop a column
+df.drop(columns=['Tax'], inplace=True)
+df.drop(columns=['Tax', 'Country'], inplace=True)  # multiple
+
+# Drop rows by index label
+df.drop(index=0, inplace=True)
+df.drop(index=[0, 1, 2], inplace=True)  # multiple
+```
+
+## Changing Data Types
+
+```python
+df['Sales'] = df['Sales'].astype(float)
+df['Date']  = pd.to_datetime(df['Date'])
+df['Month'] = df['Month'].astype('category')
+```
+
+## Applying Functions
+
+```python
+# Apply to a column
+df['Sales_K'] = df['Sales'].apply(lambda x: x / 1000)
+
+# Apply a custom function
+def classify(x):
+    if x >= 5000:
+        return 'Gold'
+    elif x >= 3000:
+        return 'Silver'
+    else:
+        return 'Bronze'
+
+df['Tier'] = df['Sales'].apply(classify)
+```
+
+## Resetting the Index
+
+```python
+df.reset_index(drop=True, inplace=True)  # reset to 0,1,2,... and drop old index
+df.set_index('Name', inplace=True)       # set a column as the new index
+```
+
+---
+
+# PART 11: HANDLING MISSING DATA 🕳️
+
+## Detecting Missing Values
+
+```python
+df.isnull()           # True/False for every cell
+df.isnull().sum()     # count of NaN per column
+df.isnull().sum().sum()   # total NaN count in entire DataFrame
+```
+
+## Dropping Missing Values
+
+```python
+# Drop rows with ANY NaN
+df.dropna(inplace=True)
+
+# Drop rows where a SPECIFIC column is NaN
+df.dropna(subset=['Sales'], inplace=True)
+
+# Drop columns with ANY NaN
+df.dropna(axis=1, inplace=True)
+
+# Drop rows where ALL values are NaN
+df.dropna(how='all', inplace=True)
+```
+
+## Filling Missing Values
+
+```python
+# Fill all NaN with a fixed value
+df.fillna(0, inplace=True)
+
+# Fill specific column
+df['Sales'].fillna(df['Sales'].mean(), inplace=True)
+
+# Fill with previous valid value (forward fill)
+df.fillna(method='ffill', inplace=True)
+
+# Fill with next valid value (backward fill)
+df.fillna(method='bfill', inplace=True)
+
+# Fill different values for different columns
+df.fillna({'Sales': 0, 'City': 'Unknown'}, inplace=True)
+```
+
+> **Best practices:**
+> - For **numeric columns** → fill with mean or median
+> - For **categorical columns** → fill with mode or 'Unknown'
+> - For **time series** → forward fill (ffill) is often most logical
+
+---
+
+# PART 12: SORTING & RANKING 📶
+
+## Sorting by Column Values
+
+```python
+# Sort ascending (default)
+df.sort_values('Sales')
+
+# Sort descending
+df.sort_values('Sales', ascending=False)
+
+# Sort by multiple columns
+df.sort_values(['City', 'Sales'], ascending=[True, False])
+
+# Sort in place
+df.sort_values('Sales', ascending=False, inplace=True)
+```
+
+## Sorting by Index
+
+```python
+df.sort_index()             # ascending
+df.sort_index(ascending=False)
+```
+
+## Ranking
+
+```python
+df['Rank'] = df['Sales'].rank(ascending=False)
+# 1 = highest sales, 2 = second highest, etc.
+
+# Tie-handling methods
+df['Sales'].rank(method='min')    # tied items get the lowest rank
+df['Sales'].rank(method='dense')  # no gaps in ranks
+```
+
+---
+
+# PART 13: GROUPBY & AGGREGATION 📊
+
+## Basic GroupBy
+
+```python
+# Group by City, sum the Sales
+df.groupby('City')['Sales'].sum()
+
+# Group by City, multiple aggregations on Sales
+df.groupby('City')['Sales'].agg(['sum', 'mean', 'count', 'max'])
+```
+
+## GroupBy on Multiple Columns
+
+```python
+df.groupby(['City', 'Month'])['Sales'].sum()
+```
+
+## agg() — Custom Aggregations
+
+```python
+df.groupby('City').agg(
+    Total_Sales=('Sales', 'sum'),
+    Avg_Sales=('Sales', 'mean'),
+    Max_Sales=('Sales', 'max'),
+    Count=('Sales', 'count')
+)
+```
+
+## reset_index() After GroupBy
+
+GroupBy result has a multi-level index — reset it to get a clean DataFrame:
+
+```python
+result = df.groupby('City')['Sales'].sum().reset_index()
+result.columns = ['City', 'Total_Sales']
+```
+
+---
+
+# PART 14: MERGING & JOINING DATAFRAMES 🔀
+
+## pd.merge() — SQL-Style Joins
+
+```python
+# DataFrames to merge
+employees = pd.DataFrame({
+    'emp_id': [1, 2, 3, 4],
+    'name':   ['Alice', 'Bob', 'Carol', 'David'],
+    'dept_id': [10, 20, 10, 30]
+})
+
+departments = pd.DataFrame({
+    'dept_id': [10, 20, 40],
+    'dept_name': ['HR', 'Finance', 'IT']
+})
+```
+
+### INNER JOIN (default) — Only Matching Rows
+
+```python
+pd.merge(employees, departments, on='dept_id')
+#    emp_id   name  dept_id dept_name
+# 0       1  Alice       10        HR
+# 1       3  Carol       10        HR
+# 2       2    Bob       20   Finance
+# David (dept_id=30) is excluded — no match
+```
+
+### LEFT JOIN — All Left Rows
+
+```python
+pd.merge(employees, departments, on='dept_id', how='left')
+# David now appears with NaN for dept_name
+```
+
+### RIGHT JOIN — All Right Rows
+
+```python
+pd.merge(employees, departments, on='dept_id', how='right')
+# IT department (dept_id=40) appears with NaN for employee info
+```
+
+### OUTER JOIN — All Rows from Both
+
+```python
+pd.merge(employees, departments, on='dept_id', how='outer')
+```
+
+### Merge on Different Column Names
+
+```python
+pd.merge(df1, df2, left_on='employee_id', right_on='emp_id')
+```
+
+## pd.concat() — Stack DataFrames
+
+```python
+# Stack vertically (add rows)
+pd.concat([df1, df2], ignore_index=True)
+
+# Stack horizontally (add columns)
+pd.concat([df1, df2], axis=1)
+```
+
+---
+
+## 🎯 KEY TAKEAWAYS — Pandas
+
+| Concept | Key Point |
+|---------|-----------|
+| **Series** | 1D labeled array — single column with row labels |
+| **DataFrame** | 2D labeled table — collection of Series sharing an index |
+| **loc** | Label-based selection; both ends inclusive in slicing |
+| **iloc** | Position-based selection; right end exclusive in slicing |
+| **Boolean indexing** | Use `&` and `|`, never `and`/`or`; wrap conditions in `()` |
+| **inplace=True** | Modifies the original DataFrame; no need to reassign |
+| **df.info()** | Best first-look function — shows dtypes and null counts |
+| **df.describe()** | Statistical summary of numeric columns |
+| **fillna(mean)** | Best practice for filling numeric missing values |
+| **groupby + agg** | SQL GROUP BY equivalent — group then summarize |
+| **pd.merge()** | SQL-style JOIN between two DataFrames |
+| **pd.concat()** | Stack DataFrames vertically or horizontally |
+
+---
+
+## ⚡ Pro Tips — Pandas
+
+1. **Always call `df.info()` first** on any new dataset — it shows dtypes, null counts, and memory usage in one shot
+2. **`inplace=True` vs reassignment** — `df.drop(..., inplace=True)` is the same as `df = df.drop(...)` — pick one style and stick to it
+3. **Never use `and`/`or` in filters** — always `&` and `|` with parentheses around each condition
+4. **Prefer `loc` over `iloc`** for readability — `df.loc[5, 'Sales']` is much clearer than `df.iloc[5, 2]`
+5. **`df.copy()`** — when creating a subset to modify, always `.copy()` it first to avoid `SettingWithCopyWarning`
+6. **`pd.to_datetime()`** — always convert date columns from strings to datetime as soon as you load data
+7. **`value_counts()`** — incredibly useful for quick frequency analysis: `df['City'].value_counts()`
+8. **`apply()` is slower than vectorized operations** — use `df['col'] * 1.18` instead of `df['col'].apply(lambda x: x * 1.18)` whenever possible
+9. **Chain `reset_index()`** after `groupby` to get a clean flat DataFrame back
+10. **`df.sample(n)`** — use to preview random rows instead of always `head()` — catches issues hidden in the first 5 rows
+
+---
+
+## Practice Exercises — Pandas
+
+**Series:**
+- [ ] Create a Series of 5 cities with their populations as values
+- [ ] Set city names as the index (not 0,1,2...)
+- [ ] Filter the Series to show only cities with population > 5 million
+- [ ] Calculate mean, max, and std of the Series
+
+**DataFrame:**
+- [ ] Create a DataFrame from a dictionary with 4 columns and 5 rows
+- [ ] Load a CSV file and inspect it with `info()`, `describe()`, `head()`, `shape`
+- [ ] Select only 2 specific columns from the DataFrame
+- [ ] Use `loc` to select rows 2–4 and columns 'Name' and 'Sales'
+- [ ] Use `iloc` to select the last 3 rows and first 2 columns
+
+**Filtering:**
+- [ ] Filter rows where Sales > 4000
+- [ ] Filter rows where City is in ['Mumbai', 'Delhi'] using `isin()`
+- [ ] Combine two conditions with `&` (AND) and `|` (OR)
+
+**Modifying:**
+- [ ] Add a new 'Tax' column (18% of Sales)
+- [ ] Add a 'Tier' column using `np.where()` — High if Sales > 4000, else Low
+- [ ] Rename two columns using `rename()`
+- [ ] Drop a column and reset the index
+
+**Missing Data:**
+- [ ] Manually introduce NaN values and count them with `isnull().sum()`
+- [ ] Fill numeric NaN with the column mean
+- [ ] Fill categorical NaN with 'Unknown'
+- [ ] Drop rows where more than one column is NaN
+
+**GroupBy & Merge:**
+- [ ] Group by City and calculate total and average Sales
+- [ ] Use `agg()` to compute sum, mean, max in one call
+- [ ] Create two DataFrames and merge them with INNER, LEFT, and OUTER joins
+- [ ] Concatenate two DataFrames vertically with `pd.concat()`
+
+---
