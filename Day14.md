@@ -383,3 +383,386 @@ df['valid_phone'] = df['Phone'].str.len() == 10
 
 ---
 
+# PART 6: STANDARDIZING TEXT DATA 📝
+
+Real-world text data is inconsistent. The same city might appear as "Mumbai", "mumbai", "MUMBAI", " Mumbai ", "mumbai ". These are all treated as different values — breaking GroupBy, filters, and merges.
+
+## Case Standardization
+
+```python
+df['City'] = df['City'].str.lower()    # all lowercase → 'mumbai'
+df['City'] = df['City'].str.upper()    # all uppercase → 'MUMBAI'
+df['City'] = df['City'].str.title()    # title case → 'Mumbai'
+df['City'] = df['City'].str.capitalize()  # only first letter
+```
+
+## Stripping Whitespace
+
+```python
+df['Name'] = df['Name'].str.strip()    # remove leading & trailing spaces
+df['Name'] = df['Name'].str.lstrip()   # remove leading only
+df['Name'] = df['Name'].str.rstrip()   # remove trailing only
+
+# Remove extra spaces between words
+df['Name'] = df['Name'].str.replace(r'\s+', ' ', regex=True)
+```
+
+## Replacing & Removing Characters
+
+```python
+# Replace specific text
+df['City'] = df['City'].str.replace('Bengaluru', 'Bangalore')
+
+# Remove special characters
+df['Name'] = df['Name'].str.replace(r'[^a-zA-Z\s]', '', regex=True)
+
+# Remove numbers from text
+df['Description'] = df['Description'].str.replace(r'\d+', '', regex=True)
+```
+
+## Fixing Categorical Inconsistencies with Map
+
+```python
+# Create a mapping dictionary
+gender_map = {
+    'male': 'Male', 'm': 'Male', 'M': 'Male',
+    'female': 'Female', 'f': 'Female', 'F': 'Female',
+    'other': 'Other', 'o': 'Other'
+}
+
+df['Gender'] = df['Gender'].str.lower().map(gender_map)
+# Values not in map become NaN — handle separately
+```
+
+## String Contains / Starts With / Ends With
+
+```python
+# Filter rows where name contains 'kumar' (case-insensitive)
+df[df['Name'].str.contains('kumar', case=False, na=False)]
+
+# Starts with specific text
+df[df['City'].str.startswith('New')]
+
+# Ends with
+df[df['Email'].str.endswith('.com')]
+```
+
+---
+
+# PART 7: HANDLING OUTLIERS 📈
+
+## What is an Outlier?
+
+> *"An outlier is a data point that differs significantly from other observations. It can be a genuine extreme value or the result of an error."*
+
+| Type | Description | Example |
+|------|-------------|---------|
+| **Error outlier** | Data entry mistake | Salary = ₹99,999,999 |
+| **Genuine outlier** | Real but extreme value | Elon Musk's net worth in a wealth dataset |
+
+> **Key rule:** Always investigate before removing. A genuine outlier contains real information — removing it would distort your analysis.
+
+---
+
+## Method 1: Z-Score (Standard Deviation Method)
+
+**Concept:** Values more than 3 standard deviations from the mean are considered outliers.
+
+```python
+from scipy import stats
+
+# Calculate Z-scores
+z_scores = np.abs(stats.zscore(df['Salary']))
+
+# Identify outliers (Z-score > 3)
+outlier_mask = z_scores > 3
+print(f"Outliers found: {outlier_mask.sum()}")
+
+# View outliers
+df[outlier_mask]
+
+# Remove outliers
+df_clean = df[~outlier_mask]
+
+# Or replace with NaN
+df.loc[outlier_mask, 'Salary'] = np.nan
+```
+
+> **When to use Z-score:** Data is approximately normally distributed (bell curve). Z-score is sensitive to extreme outliers — one massive outlier can distort the mean and std.
+
+---
+
+## Method 2: IQR Method (Interquartile Range) — Recommended
+
+**Concept:** Values below Q1 − 1.5×IQR or above Q3 + 1.5×IQR are outliers.
+
+```python
+Q1 = df['Salary'].quantile(0.25)
+Q3 = df['Salary'].quantile(0.75)
+IQR = Q3 - Q1
+
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+
+print(f"Lower bound: {lower_bound}")
+print(f"Upper bound: {upper_bound}")
+
+# Identify outliers
+outliers = df[(df['Salary'] < lower_bound) | (df['Salary'] > upper_bound)]
+print(f"Outliers: {len(outliers)}")
+
+# Option 1: Remove outliers
+df_clean = df[(df['Salary'] >= lower_bound) & (df['Salary'] <= upper_bound)]
+
+# Option 2: Cap outliers (Winsorization) — less data loss
+df['Salary'] = df['Salary'].clip(lower=lower_bound, upper=upper_bound)
+
+# Option 3: Replace with NaN then impute
+df.loc[(df['Salary'] < lower_bound) | (df['Salary'] > upper_bound), 'Salary'] = np.nan
+df['Salary'].fillna(df['Salary'].median(), inplace=True)
+```
+
+> **IQR is preferred over Z-score** because it uses median-based statistics — it's not affected by the outliers themselves.
+
+---
+
+## Method 3: Visualizing Outliers
+
+Always visualize before deciding:
+
+```python
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+
+# Boxplot — clearest view of outliers
+axes[0].boxplot(df['Salary'].dropna())
+axes[0].set_title('Boxplot — Salary')
+
+# Histogram — see distribution shape
+axes[1].hist(df['Salary'].dropna(), bins=30, edgecolor='black')
+axes[1].set_title('Histogram — Salary')
+
+# Scatter plot (against index)
+axes[2].scatter(range(len(df)), df['Salary'], alpha=0.5)
+axes[2].set_title('Scatter — Salary')
+
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+## Outlier Handling — Decision Guide
+
+```
+Investigate the outlier first:
+    ├── Is it a data entry error?
+    │       └── YES → Fix or remove it
+    │
+    ├── Is it a genuine extreme value?
+    │       ├── Affects model/analysis badly? → Cap it (Winsorization)
+    │       └── Provides real insight?        → Keep it
+    │
+    └── Are there many outliers?
+            └── YES → Re-examine your data source / collection method
+```
+
+---
+
+# PART 8: FIXING STRUCTURAL ERRORS 🔧
+
+## Fixing Column Names
+
+```python
+# View current column names
+print(df.columns.tolist())
+
+# Common issues: spaces, special characters, mixed case
+# Fix all at once
+df.columns = (
+    df.columns
+    .str.strip()           # remove leading/trailing spaces
+    .str.lower()           # lowercase
+    .str.replace(' ', '_', regex=False)   # spaces → underscores
+    .str.replace(r'[^\w]', '', regex=True)  # remove special characters
+)
+
+# Rename specific columns
+df.rename(columns={
+    'customer name': 'customer_name',
+    'sale amount': 'sale_amount'
+}, inplace=True)
+```
+
+## Fixing Index Issues
+
+```python
+# Reset index after filtering/dropping rows
+df.reset_index(drop=True, inplace=True)
+
+# Set a meaningful index
+df.set_index('CustomerID', inplace=True)
+```
+
+## Handling Mixed Date Formats
+
+```python
+# When dates are in inconsistent formats
+df['Date'] = pd.to_datetime(df['Date'], infer_datetime_format=True, errors='coerce')
+```
+
+## Removing Unwanted Characters from Entire DataFrame
+
+```python
+# Strip whitespace from all string columns at once
+str_cols = df.select_dtypes(include='object').columns
+df[str_cols] = df[str_cols].apply(lambda x: x.str.strip())
+```
+
+---
+
+# PART 9: DATA VALIDATION AFTER CLEANING ✅
+
+Before exporting, always validate that cleaning worked:
+
+```python
+print("=== POST-CLEANING VALIDATION ===")
+
+# 1. Shape
+print(f"Shape: {df.shape}")
+
+# 2. Missing values
+print(f"\nMissing values:\n{df.isnull().sum()}")
+
+# 3. Duplicates
+print(f"\nDuplicates: {df.duplicated().sum()}")
+
+# 4. Data types
+print(f"\nData types:\n{df.dtypes}")
+
+# 5. Value ranges for numeric columns
+print(f"\nNumeric summary:\n{df.describe()}")
+
+# 6. Unique values for categorical columns
+for col in df.select_dtypes(include='object').columns:
+    print(f"\n{col}: {df[col].nunique()} unique values")
+    print(df[col].value_counts().head())
+```
+
+---
+
+# PART 10: FULL END-TO-END CLEANING WORKFLOW 🔄
+
+```python
+import pandas as pd
+import numpy as np
+from scipy import stats
+
+# ── 1. LOAD ──────────────────────────────────────────────
+df = pd.read_csv('raw_data.csv')
+print("Original shape:", df.shape)
+
+# ── 2. FIX COLUMN NAMES ──────────────────────────────────
+df.columns = (df.columns.str.strip().str.lower()
+              .str.replace(' ', '_').str.replace(r'[^\w]', '', regex=True))
+
+# ── 3. FIX DATA TYPES ────────────────────────────────────
+df['salary'] = df['salary'].str.replace(r'[^\d.]', '', regex=True)
+df['salary'] = pd.to_numeric(df['salary'], errors='coerce')
+df['date']   = pd.to_datetime(df['date'], errors='coerce')
+df['age']    = pd.to_numeric(df['age'], errors='coerce')
+
+# ── 4. HANDLE MISSING VALUES ──────────────────────────────
+# Drop columns with > 50% missing
+df.dropna(thresh=int(len(df) * 0.5), axis=1, inplace=True)
+# Fill numeric columns with median
+df['age'].fillna(df['age'].median(), inplace=True)
+df['salary'].fillna(df['salary'].median(), inplace=True)
+# Fill categorical columns with mode
+df['city'].fillna(df['city'].mode()[0], inplace=True)
+
+# ── 5. REMOVE DUPLICATES ─────────────────────────────────
+df.drop_duplicates(inplace=True)
+print("After dedup:", df.shape)
+
+# ── 6. FIX INVALID ENTRIES ───────────────────────────────
+df.loc[(df['age'] < 0) | (df['age'] > 120), 'age'] = np.nan
+df['age'].fillna(df['age'].median(), inplace=True)
+
+# ── 7. STANDARDIZE TEXT ──────────────────────────────────
+df['city']   = df['city'].str.strip().str.title()
+df['gender'] = df['gender'].str.strip().str.title()
+
+# ── 8. HANDLE OUTLIERS (IQR) ─────────────────────────────
+Q1  = df['salary'].quantile(0.25)
+Q3  = df['salary'].quantile(0.75)
+IQR = Q3 - Q1
+df['salary'] = df['salary'].clip(Q1 - 1.5 * IQR, Q3 + 1.5 * IQR)
+
+# ── 9. RESET INDEX ───────────────────────────────────────
+df.reset_index(drop=True, inplace=True)
+
+# ── 10. VALIDATE ─────────────────────────────────────────
+print("\n=== CLEAN DATA SUMMARY ===")
+print(f"Shape:       {df.shape}")
+print(f"Missing:     {df.isnull().sum().sum()}")
+print(f"Duplicates:  {df.duplicated().sum()}")
+print(df.dtypes)
+
+# ── 11. EXPORT ───────────────────────────────────────────
+df.to_csv('clean_data.csv', index=False)
+print("\nClean data exported.")
+```
+
+---
+
+## 🎯 KEY TAKEAWAYS — Data Cleaning
+
+| Topic | Key Point |
+|-------|-----------|
+| **Why clean** | Garbage In, Garbage Out — dirty data = wrong analysis |
+| **Missing values** | Detect → understand why → drop or impute strategically |
+| **Mean vs Median fill** | Mean for symmetric data; Median for skewed/outlier-heavy data |
+| **Duplicates** | Always specify `subset` to catch logical duplicates by key columns |
+| **`errors='coerce'`** | Converts unconvertible values to NaN instead of crashing |
+| **Text standardization** | `.str.strip().str.title()` — always strip before comparing |
+| **IQR method** | Most robust outlier detection — use this by default |
+| **Winsorization** | `clip()` — cap outliers instead of removing them, preserves row count |
+| **Validate after** | Always check shape, nulls, duplicates, and dtypes post-cleaning |
+| **Pipeline order** | Column names → dtypes → missing → duplicates → invalid → text → outliers |
+
+---
+
+## ⚡ Pro Tips — Data Cleaning
+
+1. **Never clean the original file** — always work on a copy: `df = raw_df.copy()`
+2. **Log your cleaning steps** — print shape before and after every major operation so you know what was removed
+3. **`errors='coerce'` is your safety net** — always use it with `pd.to_numeric()` and `pd.to_datetime()`
+4. **`value_counts()` before cleaning text** — look at actual frequencies before standardizing, so you know what patterns exist
+5. **IQR over Z-score** by default — Z-score is distorted by the outliers you're trying to detect
+6. **`clip()` over `drop()`** for outliers in small datasets — dropping rows loses data; capping preserves it
+7. **Group-wise imputation** is more accurate than overall mean/median — a 20-year-old's missing salary should be filled differently from a 50-year-old's
+8. **Regex `errors='coerce'`** on date columns — inconsistent date formats (`15-Jan-2024` vs `2024/01/15`) are a nightmare; `infer_datetime_format=True` handles many cases
+9. **Clean column names immediately** — snake_case with no spaces is the safest format for column names
+10. **Document your decisions** — record WHY you imputed vs dropped so it's reproducible and explainable
+
+---
+
+## Practice Exercises — Data Cleaning
+
+- [ ] Load a messy CSV and run `df.info()` and `isnull().sum()` to audit it
+- [ ] Drop columns where more than 40% of values are missing
+- [ ] Fill numeric columns with median and categorical columns with mode
+- [ ] Detect and remove exact duplicate rows; then detect partial duplicates by key columns
+- [ ] Find and replace invalid age values (< 0 or > 120) with NaN, then impute
+- [ ] Convert a messy salary column with "₹" and commas to clean floats using `str.replace` + `pd.to_numeric`
+- [ ] Parse inconsistent date formats using `pd.to_datetime(errors='coerce')`
+- [ ] Standardize a 'city' column that has mixed case and whitespace issues
+- [ ] Build a gender mapping dictionary and use `.map()` to fix inconsistent values
+- [ ] Detect outliers in a salary column using IQR and cap them using `clip()`
+- [ ] Run the full post-cleaning validation block and verify 0 nulls and 0 duplicates
+- [ ] Write a reusable cleaning function that takes a DataFrame and returns a clean one
+
+---
