@@ -158,3 +158,158 @@ Model View   → see all tables + relationships between them
 
 ---
 
+## 6. Standard Power BI Development Stages
+
+### Why It Matters
+Every Power BI project — regardless of domain — follows the same six stages. Knowing this sequence is a strong interview signal that you understand the *process*, not just the button clicks.
+
+```
+1. Data Source Connection
+        ↓
+2. Data Cleaning & Transformation   (Power Query)
+        ↓
+3. Data Modeling                    (Relationships + Calculations)
+        ↓
+4. Data Visualization
+        ↓
+5. Report Development               (storytelling across visuals)
+        ↓
+6. Sharing Reports                  (Power BI Service)
+```
+
+---
+
+## 7. Connecting to Data Sources
+
+### Definition
+Power BI connects to a data source via a **connector** — a pre-built adapter specific to that data type (Excel, SQL Server, Web/API, etc.). There are 70+ connectors available.
+
+### Categories of Connectors
+- **File-based**: Excel, CSV, text files
+- **Database**: SQL Server, MySQL, Oracle, Access
+- **Online/Web**: Web (HTML tables), OData feeds, REST APIs
+- **Platform-specific**: Azure, Power Platform, Microsoft Fabric
+
+### Step-by-step: Connecting to Data
+
+1. Go to **Home → Get Data**
+2. Choose the relevant connector (e.g., *Excel Workbook*, *Web*, *SQL Server database*)
+3. Provide connection details (file path / server name / URL) and authenticate if required
+4. Power BI opens the **Navigator** window — lists all tables/sheets found in that source
+5. Preview each table, select the ones needed
+6. Choose **Load** (bring data in as-is) or **Transform Data** (clean first, in Power Query Editor)
+
+### Real-World Example
+Connecting to a public Wikipedia page via the **Web connector**: Power BI scans the HTML page, detects every `<table>` element, and lists them in the Navigator so you can pick which table(s) to import — useful for quick public-data pulls without manual copy-pasting.
+
+### Common Mistakes
+- Clicking **Load** directly without previewing the data — you might load messy headers or blank rows unintentionally
+- Not checking whether a web page is secured/authenticated before assuming the Web connector will work
+
+### Best Practices
+- Always preview data in the Navigator before loading
+- Prefer **Transform Data** over **Load** when you're unsure the data is clean — cheaper to fix now than after loading into the report
+
+---
+
+## 8. Data Warehouses & ETL — Where Power BI Sits
+
+### Definition
+In real organizations, data typically doesn't live in one place — sales data, marketing data, and accounting data usually sit in *separate systems*. A **data warehouse** is a centralized database where all of this gets consolidated for analysis.
+
+### The Process: ETL / ELT
+**ETL = Extract, Transform, Load** (or **ELT** = Extract, Load, Transform)
+
+```
+Source Systems (CRM, Marketing tool, Accounting tool)
+        ↓  (continuous extraction)
+   ETL Process (cleaning, transformation)
+        ↓
+   Data Warehouse (centralized, historical data)
+        ↓  (Power BI connects here, not to individual source systems)
+   Power BI (pulls data, builds reports)
+```
+
+### Why It Matters
+This is a **data engineering team's responsibility**, not the BI developer's. As a Data/BI Analyst, you typically connect Power BI to the *warehouse*, not to each individual source system directly. You are still responsible for **scheduling data refreshes** in Power BI so your reports reflect the latest warehouse data — the warehouse being updated doesn't automatically update your report.
+
+### Interview Tip
+If asked *"Does Power BI store or manage the ETL process?"* — the answer is generally **no**. Power BI Desktop *can* do light cleaning via Power Query, but large-scale ETL into a warehouse is typically a separate data engineering pipeline (e.g., using tools like SSIS, Azure Data Factory, dbt).
+
+---
+
+# 🎯 Key Takeaways
+
+| Topic | Key Point |
+|---|---|
+| Business Intelligence | A continuous system converting raw data into decision-ready insights |
+| Self-service BI | Lets business users connect, model, and analyze data without depending on IT/query specialists |
+| Power BI | Microsoft's self-service BI tool — free desktop, paid cloud sharing |
+| Power BI Desktop | Free, Windows-only, full-featured — where all development happens |
+| Power BI Service | Paid cloud app — for sharing/collaboration |
+| Power BI Mobile | View-only app for consuming published reports |
+| Power BI Gateway | Keeps data refreshed between the source and Power BI Service |
+| Licensing | Free → Pro ($14/user/mo) → Premium Per User ($24/user/mo) → Premium Per Capacity ($5,000/mo flat) |
+| Development stages | Connect → Clean/Transform → Model → Visualize → Report → Share |
+| Data warehouse | Central store where multiple source systems' data is consolidated via ETL; Power BI connects here in enterprise setups |
+
+---
+
+# ⚡ Pro Tips
+
+- Power BI Desktop doesn't require sign-in unless linking to Power BI Service — skip that prompt while learning.
+- Know your system type (32-bit vs 64-bit) before downloading Desktop — most modern systems are 64-bit.
+- In interviews, be ready to explain the **six development stages** in order — it signals process maturity, not just tool familiarity.
+- Don't over-invest time memorizing exact license prices; know the *relative differences* (storage limits, refresh frequency, shared workspace access) instead — pricing changes over time.
+- When asked "What is Power BI?" in an interview, always mention it's **self-service** — that single word differentiates it from legacy BI reporting.
+
+---
+
+# Practice Exercises
+
+- [ ] Download and install Power BI Desktop (confirm Windows OS or set up a virtual machine if on Mac)
+- [ ] Connect to any public Wikipedia page using the Web connector and explore the Navigator window
+- [ ] Open Get Data → More, and browse the full list of 70+ connectors by category (File / Database / Online Services)
+- [ ] Explain in your own words the difference between Power BI Desktop, Service, and Mobile (interview-level)
+- [ ] Draw the 6-stage Power BI development pipeline from memory
+- [ ] Research: What's the current Power BI Pro license price today? (Prices change — practice looking it up rather than memorizing)
+
+---
+
+# Interview Preparation
+
+## Frequently Asked Questions
+
+**Q: What is Power BI?**
+A: A self-service business intelligence tool by Microsoft used to connect to data sources, clean and model data, and build interactive visual reports/dashboards.
+
+**Q: What's the difference between Power BI Desktop and Power BI Service?**
+A: Desktop is a free, Windows-only local application used for development (connecting, cleaning, modeling, visualizing). Service is a paid cloud application used to publish and share reports for collaboration.
+
+**Q: Is Power BI Desktop free?**
+A: Yes, fully free and fully featured — no license required for individual use. Licensing (Pro/Premium) is only needed to collaborate/share via Power BI Service.
+
+**Q: What connectors does Power BI support?**
+A: 70+ connectors across categories — file-based (Excel, CSV), database (SQL Server, MySQL, Oracle), online/web (Web, OData, APIs), and platform-specific (Azure, Power Platform).
+
+## Scenario-Based Questions
+
+**Scenario:** Your manager wants a report shared with 15 people across departments, updated automatically every morning. What Power BI components are involved?
+**Answer:** Build in Power BI Desktop → publish to Power BI Service (Pro or higher license for sharing) → configure a Gateway connection to the data source → schedule a data refresh (e.g., daily) → team views via browser or Power BI Mobile.
+
+## Practical Questions
+
+- Given a CSV file and a SQL Server database as two possible data sources for the same analysis, which connector would you choose for each, and why?
+- If your Power BI report's Navigator shows 10 tables and you only need 3, what steps do you take to avoid loading unnecessary data?
+
+---
+
+# Revision Cheat Sheet
+
+- **BI** = system that continuously turns raw data into insight
+- **Power BI** = Microsoft's self-service BI tool
+- **Desktop** (free, build) → **Service** (paid, share) → **Mobile** (view) → **Gateway** (auto-refresh)
+- **License tiers**: Free < Pro < Premium Per User < Premium Per Capacity
+- **6 dev stages**: Connect → Clean → Model → Visualize → Report → Share
+- **Data warehouse**: centralized store; Power BI connects here in enterprise setups, not to individual source systems
+- **Get Data → Navigator → Load/Transform** = standard connection flow
