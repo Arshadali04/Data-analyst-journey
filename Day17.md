@@ -333,3 +333,228 @@ Whenever a data source's physical location is likely to change (shared drives, r
 
 ---
 
+# PART 3: Data Modeling
+
+## 11. What is Data Modeling
+
+### Definition
+Data Modeling is the second core stage after cleaning — it involves two things:
+1. **Building table relationships**
+2. **Creating new calculations** (via DAX)
+
+### Why It Matters
+Relationships are what let you drag fields from *different* tables into the *same* visual and get correctly filtered, related results — without relationships, Power BI has no idea how tables connect, and visuals will show incorrect, unfiltered totals.
+
+---
+
+## 12. Table Relationships
+
+### Auto-Detection
+Power BI automatically creates relationships when it detects **two columns with the same name and same data type** across tables. This is convenient but **not always correct** — always verify auto-created relationships in **Model View**.
+
+### Creating a Relationship Manually
+Drag the key column from one table and drop it onto the matching column in another table (in Model View) → confirm the relationship in the prompt.
+
+### Deleting a Relationship
+Right-click the relationship line in Model View → Delete.
+
+### Real-World Impact (Demonstration)
+Without a relationship between `Customers` and `Orders`, a table visual combining `Company Name` and `Total Freight` will show the **same overall total repeated for every row** — no filtering happens. With the relationship restored, each company correctly shows only its own freight total.
+
+---
+
+## 13. Cardinality
+
+### Definition
+**Cardinality** = the uniqueness of values in the relationship column, and how rows in one table relate to rows in another.
+
+### The Four Cardinality Types
+
+| Type | Meaning | Example |
+|---|---|---|
+| **One-to-Many (1:*)** | One row in Table A relates to many rows in Table B | One Customer → Many Orders |
+| **Many-to-One (*:1)** | Same relationship, viewed from the other direction | Many Orders → One Customer |
+| **One-to-One (1:1)** | Exactly one matching row on each side | Employee → Employee Login Record |
+| **Many-to-Many (*:\*)** | Multiple rows on both sides can match multiple rows on the other | Students ↔ Courses |
+
+### Interview Tip
+1:Many and Many:1 are **the same relationship**, just described from opposite directions — a favorite "gotcha" question.
+
+---
+
+## 14. Cross-Filter Direction
+
+### Definition
+Cross-filter direction determines **which table's selections can filter the other table's visuals**.
+
+### Default Behavior
+By design, filtering flows from the **"one" side to the "many" side** — this is called **Single** direction. Selecting a Customer filters related Orders, but selecting an Order does NOT filter the Customers table back.
+
+### Changing It: Single → Both
+`Right-click relationship → Properties → Cross Filter Direction → Both` allows filtering to flow **in both directions** — useful, but should be used carefully (can cause ambiguous filter paths in complex models with many relationships).
+
+### Decision Guide
+
+| Condition | Recommended Setting |
+|---|---|
+| Standard dimension → fact relationship | Single (default) |
+| Need filtering to flow both ways for a specific visual interaction | Both (change manually) |
+| Complex model with multiple many-to-many paths | Be cautious — Both can create ambiguous circular filtering |
+
+---
+
+## 15. Fact Tables vs Dimension Tables
+
+### Definition
+
+| Type | Definition | Contains |
+|---|---|---|
+| **Fact Table** | Stores transactional information; updates frequently | Order ID, Customer ID, Product ID, Order Date — the "what, who, when" of each transaction |
+| **Dimension Table** | Stores descriptive/additional attributes | Product Name, Description, Category, Customer Name, Address, Region |
+
+### Why It Matters
+Keeping additional attributes (like full product descriptions) OUT of the fact table and in a separate dimension table keeps the fact table small and fast — a core principle of efficient data modeling (this mirrors star-schema design in traditional data warehousing).
+
+### Real-World Example
+- **Fact table**: `Order Details` (Order ID, Product ID, Quantity, Discount) — grows every time a new order happens
+- **Dimension table**: `Products` (Product ID, Name, Category, Unit Price) — grows only when new products are introduced, much less frequently
+
+---
+
+## 16. Introduction to DAX
+
+### Definition
+**DAX (Data Analysis Expressions)** is Power BI's formula language — used to create calculated columns, measures, and custom aggregations. It sits at the *modeling* layer, distinct from M language (which operates at the *Power Query/transformation* layer).
+
+### Why It Matters
+Comparable to Excel formulas — DAX has ~300 functions total, but a working knowledge of **15–20 core functions** covers the vast majority of real-world Data Analyst tasks (similar to how ~30 Excel functions cover most spreadsheet work).
+
+### M vs DAX — Don't Confuse These
+
+| | M Language | DAX |
+|---|---|---|
+| Used in | Power Query Editor | Data Modeling layer (Report/Table/Model view) |
+| Purpose | Data cleaning & transformation | Calculations, measures, aggregations |
+| Applied at | Row-by-row transformation stage | After data is loaded into the model |
+
+### Interview Tip
+A frequently asked question: *"What's the difference between M and DAX?"* — **M shapes the data before it's loaded; DAX calculates on top of data that's already loaded into the model.**
+
+---
+
+# 🎯 Key Takeaways
+
+| Topic | Key Point |
+|---|---|
+| Power Query | Built-in tool for cleaning/transforming data before it loads into Power BI |
+| M Language | The formula language behind every Power Query step |
+| Data Types | Must be correctly assigned for accurate aggregation and optimized storage |
+| Remove Duplicates | Always apply at full-row level, not on a single column |
+| Split vs Merge Columns | Split = 1 column → many; Merge = many columns → 1 |
+| Measures vs Dimensions | Measures = quantitative, must be in columns; Dimensions = attributes to slice by |
+| Transpose / Pivot / Unpivot | Transpose flips full table; Pivot creates columns from row values; Unpivot creates rows from column values |
+| Append vs Merge Queries | Append = stack rows (UNION); Merge = join columns (JOIN) |
+| Custom vs Conditional Column | Custom = arithmetic formula; Conditional = IF/ELSE logic |
+| Relationships | Enable cross-table filtering in visuals; auto-detected but must be verified |
+| Cardinality | 1:Many, Many:1, 1:1, Many:Many — describes how rows match across tables |
+| Cross-filter direction | Default is Single (one → many); can be changed to Both |
+| Fact vs Dimension tables | Fact = transactional, frequently updated; Dimension = descriptive attributes |
+| DAX | Power BI's formula/calculation language, distinct from M |
+
+---
+
+# ⚡ Pro Tips
+
+- Always check the **Applied Steps** panel after connecting to a new source — Power BI often auto-applies header promotion and type detection, and it can get these wrong.
+- When removing duplicates, click the small table-selector icon (not a column header) to ensure you're deduplicating the whole row, not a single column.
+- If a Split Column or Extract step accidentally destroys a column you needed to keep, undo it and **duplicate the column first** next time before transforming.
+- Remember the **measures-in-columns rule** — it's the single most common reason a Pivot/Unpivot is needed, and it's a strong interview signal when you can explain *why* the reshape is necessary, not just *how*.
+- For combining tables, always ask "same structure, different rows?" (Append) vs "related tables, need a column from another?" (Merge) before touching the ribbon.
+- Keep DAX and M separate in your mental model: **M = before load (Power Query)**, **DAX = after load (modeling/measures)**.
+
+---
+
+# Practice Exercises
+
+- [ ] Connect to any multi-sheet Excel file and load all sheets into Power Query — identify which sheets need header promotion
+- [ ] Take a table with a combined ID column (e.g., `US-2024-1057`) and split it into 3 separate columns using delimiter-based splitting
+- [ ] Reverse the above: merge those 3 columns back into one, using a different separator
+- [ ] Create a Conditional Column that classifies rows into 3+ categories based on a numeric threshold
+- [ ] Given two tables with identical columns but different rows, use **Append Queries as New** to combine them
+- [ ] Given two related tables sharing a common ID column, use **Merge Queries** to bring one additional column across
+- [ ] In Model View, manually delete a relationship, observe the broken filtering behavior in a table visual, then recreate it
+- [ ] (Interview-level) Explain out loud: What's the difference between a Fact table and a Dimension table, using your own example
+
+---
+
+# Mini Project
+
+**Objective:** Practice the full clean → model pipeline on a multi-table dataset
+
+**Dataset:** Any public "Orders + Customers + Products" style dataset (e.g., Northwind sample data via OData, or any Kaggle e-commerce dataset with multiple related tables)
+
+**Tasks:**
+1. Connect to all related tables via Power Query
+2. Clean each table (fix headers, remove nulls, correct data types)
+3. Create a calculated `Profit Margin` custom column and a `Margin Type` conditional column
+4. Verify/create relationships between tables in Model View
+5. Correctly identify which tables are Fact tables and which are Dimension tables
+6. Build one table visual that pulls fields from at least 3 different related tables to confirm relationships are working
+
+**Skills Practiced:** Power Query cleaning, column splitting/merging, pivot/unpivot, relationship building, cardinality reasoning, fact/dimension classification
+
+---
+
+# Interview Preparation
+
+## Frequently Asked Questions
+
+**Q: What is Power Query and what language does it use?**
+A: Power Query is Power BI's built-in data cleaning/transformation tool, using the M (Mashup) language behind every applied step.
+
+**Q: What's the difference between Append and Merge queries?**
+A: Append stacks tables with the same structure vertically (adds rows, like SQL UNION). Merge joins related tables horizontally on a common key (adds columns, like SQL JOIN).
+
+**Q: What's the difference between Pivot and Unpivot?**
+A: Pivot turns unique row values into new columns (used when a metric-name column mixes multiple measures). Unpivot turns multiple columns into rows (used when the same measure is spread across separate columns, e.g., by year).
+
+**Q: What is cardinality in Power BI relationships?**
+A: It describes how rows in one table relate to rows in another — One-to-Many, Many-to-One, One-to-One, or Many-to-Many — based on the uniqueness of the relationship column's values in each table.
+
+**Q: What's the default cross-filter direction and why?**
+A: Single, flowing from the "one" side to the "many" side — because dimension tables (the "one" side) are meant to filter fact tables (the "many" side), not the reverse, by design.
+
+**Q: Difference between Fact and Dimension tables?**
+A: Fact tables store frequently-updating transactional data (what/who/when of each event). Dimension tables store descriptive attributes (names, categories, addresses) that don't change as often.
+
+## Scenario-Based Questions
+
+**Scenario:** You connect to a table where the header row is showing as "Column1, Column2, Column3" instead of proper field names — Power Query didn't auto-detect it. What do you do?
+**Answer:** Manually apply "Use First Row as Headers" from the Home tab — this usually happens when all row values (including the actual header row) share the same data type (e.g., all text), so Power Query's auto-detection can't distinguish header from data.
+
+**Scenario:** A table visual shows the same total value repeated across every row, regardless of which dimension you add. What's likely wrong?
+**Answer:** Missing or broken relationship between the tables involved — without it, Power BI can't filter the measure by the dimension, so it just repeats the grand total.
+
+## Practical Questions
+
+- Given an `Order_ID` column formatted as `CA-2023-00456`, write out the steps to extract just the numeric order number into its own column, while preserving the original column.
+- You have monthly revenue in 12 separate columns (`Jan_Revenue` … `Dec_Revenue`). Describe the exact steps to reshape this into a `Month` + `Revenue` two-column format.
+
+---
+
+# Revision Cheat Sheet
+
+- **Power Query** = data cleaning layer, uses **M language**
+- **Applied Steps** = sequential, editable log of every transformation
+- **Remove Duplicates** → always full-row level (use the table-selector icon, not a column)
+- **Split Column** (1→many) vs **Merge Columns** (many→1) — both live under Transform tab
+- **Extract** = pull a text substring; **Format** = case/whitespace cleanup
+- **Measures → columns, always.** Reshape data if they're not.
+- **Transpose** = flips entire table | **Pivot** = row values → columns | **Unpivot** = columns → rows
+- **Append** = stack rows (same structure) | **Merge** = join columns (common key)
+- **Custom Column** = formula | **Conditional Column** = IF/ELSE logic
+- **Relationships**: auto-detected but verify manually; drag-drop to create, right-click to delete
+- **Cardinality**: 1:Many / Many:1 / 1:1 / Many:Many
+- **Cross-filter direction**: default = Single (one → many); can set to Both
+- **Fact table** = transactional, frequent updates | **Dimension table** = descriptive attributes
+- **DAX** = modeling-layer formula language (post-load) — distinct from M (pre-load)
