@@ -286,3 +286,233 @@ Adding a second field to Rows (e.g., Country then City) automatically enables dr
 
 ---
 
+## 10. Drill-Down Visuals (Multi-Dimension Charts)
+
+### Definition
+Adding **two or more fields** to the same axis (e.g., Category and Country both in the Y-axis of a bar chart) automatically enables drill-down — indicated by arrow icons appearing above the visual.
+
+### Drill Controls
+
+| Icon | Function |
+|---|---|
+| Down arrow (expand one level) | Shows the next level of detail for *all* items at once |
+| Up arrow (drill up) | Returns to the parent level |
+| Double-down arrow (next level) | Switches the entire chart from one dimension to the next, replacing rather than nesting |
+| Single arrow (drill mode toggle) | Lets you click on *one specific item* to drill into just that item's detail, rather than all items at once |
+
+### Why It Matters
+Building one drill-down visual instead of two separate charts saves report real estate and lets viewers explore the contributing factors behind a total without navigating away.
+
+### Best Practice
+When drilling into a hierarchy, re-sort by the *category* level (not the measure) if the newly expanded groupings look scattered — sorting by measure value can visually separate items that belong to the same parent group.
+
+---
+
+## 11. Line Charts & Secondary Axis
+
+### Definition
+Line charts are the standard visual for **any data with a date/time sequence** — dates always belong in the X-axis (never the Y-axis), because unlike categorical dimensions, dates have an inherent, meaningful order.
+
+### Why Line Charts (not bar charts) for Time Data
+Bar/column charts *can* technically show data over time, but line charts are specifically designed to emphasize **continuity and trend** — the shape of the line over time is the point, not the comparison between individual bars.
+
+### The Scaling Problem — and Secondary Axis
+Adding two measures with very different magnitudes (e.g., Net Sales in the tens of thousands vs Total Orders in the low hundreds) to the same Y-axis makes the smaller-magnitude measure appear as a flat line — not because it isn't fluctuating, but because the shared axis scale is dominated by the larger measure.
+
+### Solution: Secondary Y-Axis
+Line charts uniquely support a **secondary Y-axis** — assign one measure to the primary axis and the other to the secondary axis, and each gets its own independent scale, making both trends visible simultaneously.
+
+### Decision Guide
+
+| Condition | Recommended Approach |
+|---|---|
+| Two measures with similar magnitude | Both on primary axis is fine |
+| Two measures with very different magnitude/scale | Assign one to secondary axis |
+| Comparing 3+ measures with different scales | Consider separate visuals instead — secondary axis only supports two scales |
+
+### Interview Tip
+*"Why does my orders trend line look flat compared to my sales trend line, even though orders are also fluctuating?"* — Answer: axis scaling. When two measures with very different magnitudes share one axis, the smaller one gets visually compressed — move it to a secondary axis.
+
+---
+
+## 12. Map Visuals
+
+### Definition
+Visuals for plotting data across geographical locations — Power BI offers three built-in map types (Map, Filled Map, Azure Map).
+
+### Required Fields
+- **Location**: any geographical field — country, state, city, zip code, or latitude/longitude
+- **Bubble Size** (optional): a measure that scales the size of each location's marker, adding a second dimension of insight (proximity *and* magnitude)
+
+### Why It Matters
+Maps reveal **spatial patterns** that a table or bar chart cannot — e.g., identifying that most business clusters around a specific coastal region, not just which countries have the most sales.
+
+### Real-World Example
+Adding `Net Sales` to Bubble Size on a country-level map instantly reveals which markets are the biggest contributors — not just where customers are located, but how much business each location represents. Drilling further into City-level location revealed that most North American business specifically clustered along the **West Coast** — a pattern invisible at the country level alone.
+
+### Best Practice
+Use drill-down (Location field: Country → City) on map visuals the same way as on bar/column charts — it reveals finer-grained spatial patterns without needing a separate visual.
+
+---
+
+## 13. Filters Pane vs Slicers
+
+### Definition
+Both filter report data, but they work differently and serve different purposes.
+
+### Comparison Table
+
+| Feature | Slicer | Filters Pane |
+|---|---|---|
+| Location | Lives inside the canvas (a visible design element) | Lives outside the canvas — doesn't affect layout |
+| Visibility to viewer | Always visible, interactive | Can be collapsed/hidden from the immediate view |
+| Scope options | Page-specific by placement | Explicit scope: **this visual**, **this page**, or **all pages** |
+| Filter type | Basic (select/deselect values) | Basic, Advanced (conditional), and **Top N** |
+
+### The Three Filter Scopes
+1. **Filters on this visual** — appears only when a specific visual is selected; affects only that one visual
+2. **Filters on this page** — affects every visual on the current page
+3. **Filters on all pages** — affects the entire report, every page, without needing to configure each page individually
+
+### Advanced Filtering
+For dimension fields, options include conditions like "starts with," "does not contain," "is blank"/"is not blank." For measure fields, options are numeric comparisons ("greater than," "less than," "is blank").
+
+### Top N Filtering — A Key Feature
+Restricts a visual to show only the top (or bottom) N values ranked by a chosen measure.
+
+**Method:** Filter type → Top N → specify count (e.g., 10) → specify the ranking measure (drag it into "By value") → Apply.
+
+### Why It Matters
+Top N filters are **context-sensitive** — they automatically recalculate based on whatever other filters/slicers are currently active. A "Top 10 Countries by Sales" list will show a different set of countries when filtered to a specific product category than when viewing all categories, because the ranking itself changes with context.
+
+### Real-World Example
+Reports built for senior leadership often need to show only "the top 10 products" or "top 3 categories" rather than the full dataset — Top N filtering is the standard mechanism for surfacing only the most business-critical rows without manual curation.
+
+### Interview Tip
+Be ready to explain: *"How would you show only the top 10 customers by revenue, and have that list stay accurate even as the user changes other filters?"* — Answer: Top N filtering, which is inherently filter-context-aware and updates dynamically.
+
+---
+
+## 14. Report Design Elements
+
+### Definition
+Beyond data visuals, Power BI supports several non-data elements for structuring and polishing a report page.
+
+| Element | Purpose |
+|---|---|
+| **Text Box** | Titles, disclaimers, footnotes, custom labels |
+| **Shapes** | Visual dividers, backgrounds for grouping visuals, custom containers |
+| **Buttons** | Built-in interactive actions (navigation, back, apply/clear slicers) |
+| **Images** | Logos, icons, custom branding |
+
+### Shapes as Visual Containers
+A shape can be layered **behind** a visual (via Format → Send Backward) to create a "framed" look — combined with making the visual's own background transparent, this produces a cohesive card-like appearance without relying solely on the visual's built-in border/background options.
+
+### Built-in Button Actions
+- **Back button**: navigates to whichever page the viewer came from (not a fixed page) — requires Ctrl+Click in Power BI Desktop, but works with a single click once published to Power BI Service
+- **Apply all slicers**: holds off filtering until the user explicitly clicks apply, useful when multiple slicer selections should take effect together rather than filtering after every individual click
+- **Clear all slicers**: resets every slicer on the page in one click
+
+### Best Practice
+Use the "Apply all slicers" pattern when a report has many slicers and instant filtering on every click would feel sluggish or cause visual "flicker" as users make multiple selections.
+
+---
+
+# 🎯 Key Takeaways
+
+| Topic | Key Point |
+|---|---|
+| CALENDAR | Builds a date table; use MIN/MAX of fact table's date field for a dynamic, self-maintaining range |
+| Date Hierarchy | Auto-generated (Year/Quarter/Month/Day) for any date field; can be toggled off in favor of the plain date |
+| TOTALMTD / TOTALYTD | Time intelligence functions that auto-filter to the latest month/year present in the data |
+| CALCULATE | Evaluates an expression under a modified filter context — foundation of most comparative DAX |
+| SAMEPERIODLASTYEAR vs DATEADD | SAMEPERIODLASTYEAR shifts by exact calendar period; DATEADD is more flexible (any interval, any direction) — critical for avoiding partial-period comparison errors |
+| Canvas | The bounded design area; configure size/background before building visuals |
+| Column vs Bar chart | Column = vertical, Bar = horizontal (Power BI-specific terminology) |
+| Stacked vs Clustered | Stacked shows cumulative + breakdown; Clustered compares legend values side by side |
+| Card visual | For displaying one standalone important number |
+| Table vs Matrix | Table = flat list; Matrix = cross-tab with automatic subtotals and drill-down |
+| Drill-down visuals | Add 2+ fields to one axis to enable expand/collapse exploration in a single chart |
+| Line chart | Always use for date-based trends; dates go on X-axis |
+| Secondary axis | Solves the scaling problem when combining measures of very different magnitude on a line chart |
+| Map visuals | Reveal spatial patterns; Bubble Size adds a magnitude dimension |
+| Filters pane vs Slicer | Filters pane lives outside canvas with 3 scopes (visual/page/all pages); Slicer is a visible canvas element |
+| Top N filter | Context-aware ranking filter — recalculates dynamically with other active filters |
+| Report elements | Text boxes, shapes, buttons, images add structure and interactivity beyond data visuals |
+
+---
+
+# ⚡ Pro Tips
+
+- Build your date dimension table with `MIN`/`MAX` of the fact table's date column rather than hardcoded dates — it self-maintains as new data arrives.
+- Before trusting any YoY or period-over-period metric, check whether the current period has **complete** data — a partial period compared against a full prior period will always look artificially worse.
+- Sort every bar/column chart by its measure value, not alphabetically — sorted charts let viewers instantly read rankings without comparing bar heights.
+- Reach for a Matrix visual, not a Table, the moment you need subtotals or a cross-tab view — retrofitting subtotals onto a Table means manual aggregation.
+- If a trend line looks suspiciously flat, check whether it's sharing an axis with a much-larger-magnitude measure — move it to the secondary axis.
+- Use Top N filtering for executive-facing reports — it's inherently filter-context-aware, so "top 10" stays accurate no matter what other filters the viewer applies.
+
+---
+
+# Practice Exercises
+
+- [ ] Build a dynamic date table using `CALENDAR` with `MIN`/`MAX` of your fact table's date column
+- [ ] Create `TOTALMTD` and `TOTALYTD` measures for any sales/revenue field, and display each in a Card visual
+- [ ] Create a `CALCULATE` + `SAMEPERIODLASTYEAR` measure, then recreate the same comparison using `CALCULATE` + `DATEADD` with an exact day offset — compare the two results and explain any difference
+- [ ] Build a clustered column chart with a category on the X-axis and a 3-value legend; then rebuild the same as stacked and compare
+- [ ] Create a Matrix visual with two dimensions in Rows and one measure in Values — confirm subtotals and grand total appear correctly
+- [ ] Build a two-level drill-down bar chart (e.g., Category → Country) and practice all four drill controls
+- [ ] Build a line chart combining two measures of very different magnitude, observe the flattened line, then fix it using a secondary axis
+- [ ] Apply a Top 10 filter to a table visual, then change an unrelated slicer and confirm the Top 10 list updates accordingly
+
+---
+
+# Interview Preparation
+
+## Frequently Asked Questions
+
+**Q: What does the CALCULATE function do?**
+A: It evaluates an expression under a filter context modified by the filters supplied as its additional arguments — it's the foundation of most comparative and conditional DAX calculations.
+
+**Q: What's the difference between SAMEPERIODLASTYEAR and DATEADD?**
+A: SAMEPERIODLASTYEAR shifts dates back exactly one calendar year, preserving the same period type. DATEADD is more flexible — it can shift by any number of days, months, quarters, or years, in either direction, which matters when comparing partial periods where an exact day-count offset gives a more accurate like-for-like comparison.
+
+**Q: When would you use a Matrix visual instead of a Table?**
+A: Whenever automatic subtotals, a grand total, or a true cross-tabulation (two dimensions at once) are needed — a Table only supports a flat list with no built-in aggregation at intermediate levels.
+
+**Q: Why would a line chart with two measures show one line as completely flat?**
+A: If the two measures have very different magnitudes and share the same Y-axis, the smaller-magnitude measure gets visually compressed near zero. The fix is assigning it to the secondary axis.
+
+**Q: What's the difference between the Filters pane and a Slicer?**
+A: A Slicer is a visible canvas element that's part of the report's layout. The Filters pane lives outside the canvas, doesn't affect visual layout, and supports three distinct scopes — this visual, this page, or all pages — plus basic, advanced, and Top N filter types.
+
+## Scenario-Based Questions
+
+**Scenario:** Your month-to-date year-over-year comparison shows a dramatic decline, but you suspect something's wrong. What should you check first?
+**Answer:** Whether the current period has complete data. If the latest month only has a few days of data, comparing it against a full prior-year month (via SAMEPERIODLASTYEAR) isn't a fair comparison — switch to DATEADD with an exact day-count offset instead.
+
+**Scenario:** A stakeholder wants a report showing only the top 10 products by revenue, but wants that list to stay accurate as they filter by different regions. How do you build this?
+**Answer:** Use a Top N filter (Filter type: Top N) on the product field, ranked by the revenue measure. Because Top N filters are filter-context-aware, the top-10 list will automatically recalculate for whatever region filter is applied.
+
+## Practical Questions
+
+- Write the DAX for a measure showing year-over-year growth percentage, using an existing YTD Sales measure and its prior-year equivalent.
+- Describe the steps to build a report page where clicking a button toggles the entire page's view between "by Sales" and "by Orders" without creating two separate pages the user has to manually navigate between.
+
+---
+
+# Revision Cheat Sheet
+
+- **CALENDAR(min, max)** → dynamic date table using fact table's actual date range
+- **TOTALMTD / TOTALYTD** → auto-filter to latest month/year in the data
+- **CALCULATE(expr, filters)** → evaluate under modified filter context — DAX's most powerful function
+- **SAMEPERIODLASTYEAR** → exact calendar year shift | **DATEADD** → flexible interval shift (use for partial-period accuracy)
+- **Column chart** = vertical bars | **Bar chart** = horizontal bars
+- **Stacked** = cumulative + breakdown | **Clustered** = side-by-side comparison
+- **Card visual** = one important standalone number
+- **Table** = flat list, no subtotals | **Matrix** = cross-tab with automatic subtotals + drill-down
+- **Drill-down** = 2+ fields on one axis → expand/collapse controls appear automatically
+- **Line chart** = always for date trends; dates on X-axis; supports secondary Y-axis for mismatched scales
+- **Map visual** = Location field + optional Bubble Size for magnitude
+- **Slicer** = canvas element | **Filters pane** = outside canvas, 3 scopes (visual/page/all pages)
+- **Top N filter** = dynamically ranked, filter-context-aware
+- **Report elements**: text boxes, shapes (can frame visuals), buttons (built-in nav/apply/clear actions), images
