@@ -189,3 +189,100 @@ Always sanity-check date-based comparison metrics against the actual data comple
 
 ---
 
+# PART 2: Data Visualization Fundamentals
+
+## 6. The Canvas & Report Page Settings
+
+### Definition
+The **canvas** is the bounded design area (marked by dotted lines in Report view) where all visuals live. Before adding visuals, you can configure canvas-level settings.
+
+### Settings Available
+- **Canvas size**: standard presets or custom height/width ratios (choose based on the target display — monitor vs projector vs mobile)
+- **Canvas background**: solid color or custom image, with adjustable transparency
+
+### Best Practice
+Decide on canvas size and background before building visuals — retrofitting a size change after populating a page can disrupt layout alignment.
+
+---
+
+## 7. Column Charts & Bar Charts
+
+### Definition
+
+| Term (Power BI) | Orientation |
+|---|---|
+| **Column Chart** | Vertical bars |
+| **Bar Chart** | Horizontal bars |
+
+> Note: In some other BI tools, "bar chart" refers to both orientations generically — Power BI uses distinct terminology.
+
+### Stacked vs Clustered
+
+| Type | Legend Behavior | When To Use |
+|---|---|---|
+| **Stacked** | Legend values stack on top of each other within one bar; shows both individual contribution and cumulative total | When the *total* matters as much as the breakdown |
+| **Clustered** | Legend values appear as separate bars side by side | When comparing legend categories directly *against each other* |
+
+### Best Practices
+- **Always sort your chart** — by the measure (ascending/descending), not by category name alphabetically. Sorted data lets viewers instantly identify rankings (e.g., "4th highest") without comparing bar heights one by one
+- **Use tooltips** to check exact values, but don't rely on them as the primary way to convey data — turn on **Data Labels** (Format → Data Label) for values the audience needs to read at a glance
+- **Be selective with Legend fields** — only use fields with a small number of distinct values. A legend with too many categories (e.g., month instead of year) makes the chart visually noisy and hard to interpret
+
+### Common Mistake
+Adding a high-cardinality field (like individual months across years, or product names) to the Legend — this fragments the chart into too many colors/segments to be readable.
+
+### Real-World Example
+Comparing yearly sales by category across a 3-year legend (1996, 1997, 1998) revealed that 1998 appeared consistently lower — but this was because the dataset only had **partial data through May 1998**, not because performance actually declined. Always account for partial-period data before drawing conclusions from a chart.
+
+---
+
+## 8. Card Visuals
+
+### Definition
+A visual purpose-built for displaying **one single, important number** — the "headline metric" of a report.
+
+### When To Use
+Any KPI that deserves standalone visibility without being broken down by other dimensions — e.g., Total Net Sales, Total Orders, YTD Sales.
+
+### Formatting Options
+- **Callout value**: the number itself — font size, color, decimal precision, and **display units** (None / Thousands / Millions / Auto) are all configurable
+- **Category label**: the measure's name, shown below the value — can be hidden or customized
+- **General/Effects**: background color, border (including rounded corners and custom border color), and a separate **Title** with its own font, background, and alignment settings
+
+### Best Practice
+Set a consistent display unit (e.g., always show in thousands) across all Card visuals in a report for visual consistency — mixing raw numbers, thousands, and millions across cards creates confusion.
+
+---
+
+## 9. Table Visuals vs Matrix Visuals
+
+### Comparison Table
+
+| Feature | Table Visual | Matrix Visual |
+|---|---|---|
+| Layout | Flat — one column per field added | Flexible — separate Rows, Columns, and Values sections |
+| Subtotals | Not shown automatically; must be manually aggregated | Automatic subtotals at every row/column level, plus grand total |
+| Cross-tabulation | Not possible | Supports true cross-tab (e.g., Country × Category grid) |
+| Drill-down | Not supported | Supported, when multiple fields are added to Rows/Columns |
+| Best for | Simple, flat detail lists | Multi-dimensional summaries needing subtotals |
+
+### When To Use
+- **Table**: quick detailed listing, e.g., country-level sales and order counts, sorted by any column with a single click on the header
+- **Matrix**: whenever you need both granular detail *and* aggregated subtotals simultaneously — e.g., Country (rows) × Category (columns) with Net Sales in the values, showing category totals, country totals, and a grand total all at once
+
+### Real-World Example
+A table showing Country, Total Orders, and Net Sales revealed **different top-4 rankings** depending on which column it was sorted by — USA/Germany/Austria/Brazil by sales, but Germany/USA/Brazil/France by order count. Sorting alone can't show both rankings simultaneously — this is where **conditional formatting** (background color or data bars applied via Format → Cell Elements) helps visually highlight one metric's ranking even while sorted by another.
+
+### Conditional Formatting Options
+
+| Option | Recommendation |
+|---|---|
+| Background color | ✅ Recommended — clear visual gradient |
+| Data bars | ✅ Recommended — intuitive proportional bars |
+| Font color | ⚠️ Not recommended — hard to read text with color-only variation |
+
+### Best Practice — Matrix Drill-Down
+Adding a second field to Rows (e.g., Country then City) automatically enables drill-down in a Matrix — click the expand icon on any single row to drill into just that row's detail, or use the header-level drill controls to expand/collapse the entire level at once.
+
+---
+
