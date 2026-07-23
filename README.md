@@ -139,10 +139,10 @@ I believe in the power of **learning in public**. Every note, every error, every
 | 🐍 Python | 🟢 Completed | `▓▓▓▓▓▓▓▓▓▓ 100%` | 100% |
 | 🗄️ SQL | 🟢 Completed | `▓▓▓▓▓▓▓▓▓▓ 100%` | 100% |
 | 📊 Excel | 🟡 In Progress | `▓▓▓▓▓▓▓░░░ 70%` | 85% |
-| 🐼 Pandas | 🟡 In Progress | `▓▓▓▓▓░░░░░ 50%` | 90% |
-| 🔢 NumPy | 🟡 In Progress | `▓▓▓▓░░░░░░ 40%` | 80% |
-| 📈 Matplotlib | 🟡 In Progress | `▓▓▓▓░░░░░░ 40%` | 80% |
-| 🌊 Seaborn | 🟡 In Progress | `▓▓▓░░░░░░░ 30%` | 80% |
+| 🐼 Pandas | 🟡 In Progress | `▓▓▓▓▓▓▓▓░░ 85%` | 85% |
+| 🔢 NumPy | 🟡 In Progress | `▓▓▓▓▓▓▓▓░░ 85%` | 85% |
+| 📈 Matplotlib | 🟡 In Progress | `▓▓▓▓▓▓▓▓░░ 85%` | 85% |
+| 🌊 Seaborn | 🟡 In Progress | `▓▓▓▓▓▓▓▓░░ 85%` | 85% |
 | 📉 Statistics | 🟡 In Progress | `▓▓▓▓▓░░░░░ 50%` | 85% |
 | 💡 Power BI | 🟢 Completed | `▓▓▓▓▓▓▓▓▓▓ 100%` | 100% |
 | 🖼️ Tableau | 🔵 Planned | `░░░░░░░░░░  0%` | 80% |
