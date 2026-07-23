@@ -82,7 +82,7 @@ I believe in the power of **learning in public**. Every note, every error, every
 
 | # | Topic | Status | Notes |
 |---|-------|--------|-------|
-| 4 | ✅ **Python** | `In Progress` | Core syntax, OOP, File handling |
+| 4 | ✅ **Python** | `Completed` | Core syntax, OOP, File handling |
 | 5 | ✅ **Pandas** | `In Progress` | DataFrames, GroupBy, Merging, Cleaning |
 | 6 | ✅ **NumPy** | `In Progress` | Arrays, Math operations, Broadcasting |
 | 7 | ✅ **Matplotlib** | `In Progress` | Line, Bar, Scatter, Histogram plots |
@@ -97,7 +97,7 @@ I believe in the power of **learning in public**. Every note, every error, every
 
 | # | Topic | Status | Notes |
 |---|-------|--------|-------|
-| 9  | ✅ **Power BI** | `Planned` | DAX, Data Models, Interactive Dashboards |
+| 9  | ✅ **Power BI** | `Completed` | DAX, Data Models, Interactive Dashboards |
 | 10 | ✅ **Tableau** | `Planned` | Calculated Fields, Story Points, Filters |
 | 11 | ✅ **Dashboard Development** | `Planned` | End-to-end dashboard projects |
 
@@ -136,15 +136,15 @@ I believe in the power of **learning in public**. Every note, every error, every
 
 | Skill | Status | Progress | Target |
 |-------|--------|----------|--------|
-| 🐍 Python | 🟡 In Progress | `▓▓▓▓▓▓░░░░ 60%` | 90% |
-| 🗄️ SQL | 🟡 In Progress | `▓▓▓▓▓▓▓░░░ 70%` | 95% |
+| 🐍 Python | 🟢 Completed | `▓▓▓▓▓▓▓▓▓▓ 100%` | 100% |
+| 🗄️ SQL | 🟢 Completed | `▓▓▓▓▓▓▓▓▓▓ 100%` | 100% |
 | 📊 Excel | 🟡 In Progress | `▓▓▓▓▓▓▓░░░ 70%` | 85% |
 | 🐼 Pandas | 🟡 In Progress | `▓▓▓▓▓░░░░░ 50%` | 90% |
 | 🔢 NumPy | 🟡 In Progress | `▓▓▓▓░░░░░░ 40%` | 80% |
 | 📈 Matplotlib | 🟡 In Progress | `▓▓▓▓░░░░░░ 40%` | 80% |
 | 🌊 Seaborn | 🟡 In Progress | `▓▓▓░░░░░░░ 30%` | 80% |
 | 📉 Statistics | 🟡 In Progress | `▓▓▓▓▓░░░░░ 50%` | 85% |
-| 💡 Power BI | 🔵 Planned | `░░░░░░░░░░  0%` | 85% |
+| 💡 Power BI | 🟢 Completed | `▓▓▓▓▓▓▓▓▓▓ 100%` | 100% |
 | 🖼️ Tableau | 🔵 Planned | `░░░░░░░░░░  0%` | 80% |
 | 🧹 Data Cleaning | 🟡 In Progress | `▓▓▓▓▓░░░░░ 50%` | 90% |
 | 🔍 EDA | 🟡 In Progress | `▓▓▓▓░░░░░░ 40%` | 90% |
@@ -335,9 +335,9 @@ I believe in the power of **learning in public**. Every note, every error, every
 🏆 MY 2026 DATA ANALYST GOALS
 ```
 
-- [ ] 🗄️ **Master SQL** — Window functions, CTEs, query optimization
-- [ ] 🐍 **Complete Python for Data Analysis** — Pandas, NumPy, EDA pipeline
-- [ ] 💡 **Complete Power BI** — Build 3+ interactive dashboards
+- [x] 🗄️ **Master SQL** — Window functions, CTEs, query optimization
+- [x] 🐍 **Complete Python for Data Analysis** — Pandas, NumPy, EDA pipeline
+- [x] 💡 **Complete Power BI** — Build 3+ interactive dashboards
 - [ ] 🖼️ **Learn Tableau** — Publish dashboards to Tableau Public
 - [ ] 📁 **Build 5 Portfolio Projects** — At least 2 end-to-end with real data
 - [ ] 🧩 **Solve 100 LeetCode Problems** — Mix of SQL and Python
