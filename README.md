@@ -98,7 +98,7 @@ I believe in the power of **learning in public**. Every note, every error, every
 | # | Topic | Status | Notes |
 |---|-------|--------|-------|
 | 9  | ✅ **Power BI** | `Completed` | DAX, Data Models, Interactive Dashboards |
-| 10 | ✅ **Tableau** | `Planned` | Calculated Fields, Story Points, Filters |
+| 10 | ✅ **Tableau** | `In Progress` | Calculated Fields, Story Points, Filters |
 | 11 | ✅ **Dashboard Development** | `Planned` | End-to-end dashboard projects |
 
 </details>
@@ -110,7 +110,7 @@ I believe in the power of **learning in public**. Every note, every error, every
 
 | # | Topic | Status | Notes |
 |---|-------|--------|-------|
-| 12 | ✅ **Data Cleaning** | `In Progress` | Handling nulls, outliers, formatting |
+| 12 | ✅ **Data Cleaning** | `Completed` | Handling nulls, outliers, formatting |
 | 13 | ✅ **EDA** | `In Progress` | Exploratory Data Analysis techniques |
 | 14 | ✅ **Data Analyst Projects** | `In Progress` | Real-world case studies |
 | 15 | ✅ **LeetCode** | `In Progress` | SQL + Python problem solving |
@@ -138,7 +138,7 @@ I believe in the power of **learning in public**. Every note, every error, every
 |-------|--------|----------|--------|
 | 🐍 Python | 🟢 Completed | `▓▓▓▓▓▓▓▓▓▓ 100%` | 100% |
 | 🗄️ SQL | 🟢 Completed | `▓▓▓▓▓▓▓▓▓▓ 100%` | 100% |
-| 📊 Excel | 🟡 In Progress | `▓▓▓▓▓▓▓░░░ 70%` | 85% |
+| 📊 Excel | 🟢 Completed | `▓▓▓▓▓▓▓▓▓▓ 100%` | 100% |
 | 🐼 Pandas | 🟡 In Progress | `▓▓▓▓▓▓▓▓░░ 85%` | 85% |
 | 🔢 NumPy | 🟡 In Progress | `▓▓▓▓▓▓▓▓░░ 85%` | 85% |
 | 📈 Matplotlib | 🟡 In Progress | `▓▓▓▓▓▓▓▓░░ 85%` | 85% |
