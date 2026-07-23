@@ -145,10 +145,10 @@ I believe in the power of **learning in public**. Every note, every error, every
 | 🌊 Seaborn | 🟡 In Progress | `▓▓▓▓▓▓▓▓░░ 85%` | 85% |
 | 📉 Statistics | 🟡 In Progress | `▓▓▓▓▓░░░░░ 50%` | 85% |
 | 💡 Power BI | 🟢 Completed | `▓▓▓▓▓▓▓▓▓▓ 100%` | 100% |
-| 🖼️ Tableau | 🔵 Planned | `░░░░░░░░░░  0%` | 80% |
-| 🧹 Data Cleaning | 🟡 In Progress | `▓▓▓▓▓░░░░░ 50%` | 90% |
+| 🖼️ Tableau | 🟡 In Progress | `▓▓▓▓▓░░░░░ 50%` | 80% |
+| 🧹 Data Cleaning | 🟢 Completed | `▓▓▓▓▓▓▓▓▓▓ 100%` | 100% |
 | 🔍 EDA | 🟡 In Progress | `▓▓▓▓░░░░░░ 40%` | 90% |
-| 🧩 LeetCode (SQL) | 🟡 In Progress | `▓▓▓░░░░░░░ 25/100` | 100 |
+| 🧩 LeetCode (SQL) | 🟡 In Progress | `▓▓▓▓▓░░░░░ 50/100` | 100 |
 
 **Legend:** 🟢 Completed &nbsp;|&nbsp; 🟡 In Progress &nbsp;|&nbsp; 🔵 Planned
 
